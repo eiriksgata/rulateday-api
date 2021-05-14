@@ -2,7 +2,7 @@
 
 **本项目是为mirai-rulateday-dice项目提供云端服务的API**
 前端的开源项目为 rulateday-api-vue-client
-heroku-deploy分支包含了client vue编译代码
+
 
 ### 主要用途
 1. 提供一个用户提交数据的平台服务。
