@@ -3,6 +3,7 @@ package indi.eiriksgata.rulateday.mapper;
 import indi.eiriksgata.rulateday.pojo.QueryDataBase;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 /**
  * author: create by Keith
