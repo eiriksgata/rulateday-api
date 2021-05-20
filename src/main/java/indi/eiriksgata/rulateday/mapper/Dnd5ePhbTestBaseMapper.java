@@ -57,5 +57,4 @@ public interface Dnd5ePhbTestBaseMapper {
     void insertCreaturePhbDmg(QueryDataBase dataBase);
 
 
-
 }
