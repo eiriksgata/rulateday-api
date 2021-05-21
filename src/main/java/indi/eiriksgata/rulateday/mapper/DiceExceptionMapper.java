@@ -3,6 +3,9 @@ package indi.eiriksgata.rulateday.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import indi.eiriksgata.rulateday.pojo.DiceException;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * author: create by Keith
@@ -13,6 +16,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface DiceExceptionMapper extends BaseMapper<DiceException> {
 
-
+    @Select("select * from dice_exception")
+    List<DiceException> selectAll();
 
 }
