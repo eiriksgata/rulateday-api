@@ -11,11 +11,7 @@ import lombok.Getter;
 @Getter
 public enum CommonBaseExceptionEnum {
 
-    //设备业务错误
-    DEVICE_DEL_FACE_ERROR(20201, "设备删除人脸失败"),
-    DEVICE_ADD_FACE_ERROR(20202, "设备增加人脸失败"),
-    DEVICE_CARD_ERROR(20203, "设备更新卡数据错误"),
-    DEVICE_OPEN_DOOR_ERROR(20204, "设备开门失败"),
+    DICE_EXCEPTION_COMMIT_ERROR(10010, "骰子异常数据提交失败"),
 
     DEVICE_FACE_PICTURE_MAX_ERROR(20204, "图片数据过大"),
 
