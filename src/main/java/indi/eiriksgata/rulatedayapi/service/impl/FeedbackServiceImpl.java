@@ -32,6 +32,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         addData.setTitle(title);
         addData.setContent(content);
         addData.setCreatedTimestamp(System.currentTimeMillis());
+        addData.setId(null);
         try {
             diceExceptionMapper.insert(addData);
         } catch (PersistenceException exception) {
@@ -43,6 +44,12 @@ public class FeedbackServiceImpl implements FeedbackService {
     public PageInfo diceExceptionQuery(int pageNumber, int pageSize) {
         PageHelper.startPage(pageNumber, pageSize);
         return new PageInfo<>(diceExceptionMapper.selectAll());
+    }
+
+    @Override
+    @Transactional
+    public void deleteFeedback(Long id) {
+        diceExceptionMapper.deleteById(id);
     }
 
 

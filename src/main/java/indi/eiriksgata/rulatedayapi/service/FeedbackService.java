@@ -14,4 +14,7 @@ public interface FeedbackService {
     void addDiceExceptionRecord(String title, String content, long qqId);
 
     PageInfo diceExceptionQuery(int pageNumber, int pageSize);
+
+    @Transactional
+    void deleteFeedback(Long id);
 }

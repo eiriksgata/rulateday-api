@@ -1,8 +1,8 @@
 package indi.eiriksgata.rulatedayapi.controller;
 
-import com.github.pagehelper.PageHelper;
 import indi.eiriksgata.rulatedayapi.service.FeedbackService;
 import indi.eiriksgata.rulatedayapi.vo.DiceExceptionVo;
+import indi.eiriksgata.rulatedayapi.vo.FeedbackVo;
 import indi.eiriksgata.rulatedayapi.vo.PageHelperBean;
 import indi.eiriksgata.rulatedayapi.vo.ResponseBean;
 import io.swagger.annotations.Api;
@@ -40,6 +40,14 @@ public class DiceExceptionController {
         return ResponseBean.success(
                 feedbackService.diceExceptionQuery(data.getPageNumber(), data.getPageSize())
         );
+    }
+
+
+    @PostMapping("/feedback/delete")
+    public ResponseBean feedbackDelete(@RequestBody FeedbackVo feedbackVo) {
+        System.out.println(feedbackVo.getId());
+        feedbackService.deleteFeedback(feedbackVo.getId());
+        return ResponseBean.success();
     }
 
 
