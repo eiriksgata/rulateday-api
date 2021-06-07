@@ -45,7 +45,6 @@ public class DiceExceptionController {
 
     @PostMapping("/feedback/delete")
     public ResponseBean feedbackDelete(@RequestBody FeedbackVo feedbackVo) {
-        System.out.println(feedbackVo.getId());
         feedbackService.deleteFeedback(feedbackVo.getId());
         return ResponseBean.success();
     }
