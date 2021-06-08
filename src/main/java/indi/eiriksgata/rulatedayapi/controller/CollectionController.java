@@ -8,15 +8,11 @@ import indi.eiriksgata.rulatedayapi.vo.ResponseBean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.xml.ws.Response;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
-import java.util.Properties;
 import java.util.Random;
 
 /**
