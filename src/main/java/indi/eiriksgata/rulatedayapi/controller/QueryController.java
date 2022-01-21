@@ -27,12 +27,10 @@ public class QueryController {
 
     @PostMapping("/dnd5e/spell")
     @ApiOperation(value = "dnd5e法术列表", httpMethod = "POST")
-    public ResponseBean<PageInfo> dnd5eLibQuery(@RequestBody PageHelperBean<String> data) {
+    public ResponseBean<PageInfo<?>> dnd5eLibQuery(@RequestBody PageHelperBean<String> data) {
         PageHelper.startPage(data.getPageNumber(), data.getPageSize());
         return ResponseBean.success(new PageInfo<>(dnd5ePhbDataMapper.selectAllSkillPhb()));
     }
-
-
 
 
 }

@@ -32,6 +32,8 @@ public enum CommonBaseExceptionEnum {
     //plateform-server
     DEVICE_ID_NOT_FOUNT_ERR(30601, "The corresponding device information was not found"),
 
+    METHOD_ARGUMENT_NOT_VALID(10001, "接口请求参数异常"),
+
     SUCCESS(0, "Operation Success"),
 
     ERROR(-1, "System Error"),

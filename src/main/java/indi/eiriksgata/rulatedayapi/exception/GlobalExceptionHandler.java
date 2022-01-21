@@ -1,9 +1,9 @@
 package indi.eiriksgata.rulatedayapi.exception;
 
-
 import indi.eiriksgata.rulatedayapi.utils.ExceptionUtils;
 import indi.eiriksgata.rulatedayapi.vo.ResponseBean;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.bind.validation.BindValidationException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,12 +13,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * 统一异常处理
- *
- * @author Snake
- * @date 2019/03/13
- */
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -34,7 +28,6 @@ public class GlobalExceptionHandler {
     public ResponseBean<String> defaultErrorHandler(Exception ex) {
         // simple print stack trace
         ex.printStackTrace();
-        //log.error(ExceptionUtils.getExceptionAllInfo(ex));
         return ResponseBean.error(ex.getMessage());
     }
 
@@ -50,13 +43,14 @@ public class GlobalExceptionHandler {
     public ResponseBean<String> handleMethodArgumentNotValidException(
             HttpServletRequest request, MethodArgumentNotValidException ex) {
         BindingResult bindingResult = ex.getBindingResult();
-        StringBuilder errorMessage = new StringBuilder("Invalid Request:\n");
+        StringBuilder errorMessage = new StringBuilder("Invalid Request:");
         for (FieldError fieldError : bindingResult.getFieldErrors()) {
-            errorMessage.append(fieldError.getDefaultMessage()).append("\n");
+            errorMessage.append("[").append(fieldError.getField()).append("]");
+            errorMessage.append(fieldError.getDefaultMessage()).append(";");
         }
         // simple print stack trace
         ex.printStackTrace();
-        return ResponseBean.error(errorMessage.toString());
+        return ResponseBean.error(CommonBaseExceptionEnum.METHOD_ARGUMENT_NOT_VALID, errorMessage.toString());
     }
 
     /**
@@ -68,14 +62,21 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = CommonBaseException.class)
     @ResponseBody
-    public ResponseBean handleCommonException(HttpServletRequest request, CommonBaseException ex) {
+    public ResponseBean<?> handleCommonException(HttpServletRequest request, CommonBaseException ex) {
         ex.printStackTrace();
         return ResponseBean.error(CommonBaseExceptionEnum.getExceptionEnumByCode(ex.getErrCode()));
     }
 
     @ExceptionHandler(value = NumberFormatException.class)
     @ResponseBody
-    public ResponseBean handleNumberFormatException(NumberFormatException ex) {
+    public ResponseBean<?> handleNumberFormatException(NumberFormatException ex) {
+        ex.printStackTrace();
+        return ResponseBean.error(ExceptionUtils.getExceptionAllInfo(ex));
+    }
+
+    @ExceptionHandler(value = BindValidationException.class)
+    @ResponseBody
+    public ResponseBean<?> handleValidationException(BindValidationException ex) {
         ex.printStackTrace();
         return ResponseBean.error(ExceptionUtils.getExceptionAllInfo(ex));
     }

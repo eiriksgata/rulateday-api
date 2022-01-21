@@ -25,7 +25,7 @@ public class DiceExceptionController {
     FeedbackService feedbackService;
 
     @PostMapping("/feedback/exception")
-    public ResponseBean feedbackException(@RequestBody DiceExceptionVo diceExceptionVo) {
+    public ResponseBean<?> feedbackException(@RequestBody DiceExceptionVo diceExceptionVo) {
         feedbackService.addDiceExceptionRecord(
                 diceExceptionVo.getTitle(),
                 diceExceptionVo.getContent(),
@@ -36,7 +36,7 @@ public class DiceExceptionController {
 
 
     @PostMapping("/feedback/query")
-    public ResponseBean feedbackQuery(@RequestBody PageHelperBean<String> data) {
+    public ResponseBean<?> feedbackQuery(@RequestBody PageHelperBean<String> data) {
         return ResponseBean.success(
                 feedbackService.diceExceptionQuery(data.getPageNumber(), data.getPageSize())
         );
@@ -44,7 +44,7 @@ public class DiceExceptionController {
 
 
     @PostMapping("/feedback/delete")
-    public ResponseBean feedbackDelete(@RequestBody FeedbackVo feedbackVo) {
+    public ResponseBean<?> feedbackDelete(@RequestBody FeedbackVo feedbackVo) {
         feedbackService.deleteFeedback(feedbackVo.getId());
         return ResponseBean.success();
     }

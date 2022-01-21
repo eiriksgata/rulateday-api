@@ -26,11 +26,11 @@ public class CollectionController {
 
 
     @GetMapping("/picture/random")
-    public ResponseBean pictureRandom() {
+    public ResponseBean<?> pictureRandom() {
 
         String url = "https://safebooru.donmai.us/posts?page=" + new Random().nextInt(999);
         String resultHtml = RestUtil.get(url);
-        List<String> formatText = RegularExpressionUtils.getMatchers("\\<a href=\"/posts/[0-9]+\">", resultHtml);
+        List<String> formatText = RegularExpressionUtils.getMatchers("href=\"/posts/[0-9]+\">", resultHtml);
         String pictureId = RegularExpressionUtils.getMatcher("[0-9]+",
                 formatText.get(new Random().nextInt(19)));
 

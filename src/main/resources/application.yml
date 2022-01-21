@@ -16,7 +16,7 @@ spring:
     name: rulateday-api
 
   datasource:
-    url: jdbc:sqlite:rulateday-api.db
+    url: jdbc:sqlite:data/rulateday-api.db
     username:
     password:
 
