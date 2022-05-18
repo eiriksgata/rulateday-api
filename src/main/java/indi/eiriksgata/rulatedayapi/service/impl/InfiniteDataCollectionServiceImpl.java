@@ -23,6 +23,8 @@ public class InfiniteDataCollectionServiceImpl implements InfiniteDataCollection
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public QueryDataBase dataUpdate(QueryDataBase queryDataBase) {
+        //将标点的中文符号转为英文
+        queryDataBase.setName(queryDataBase.getName().replaceAll("：", ":"));
         QueryDataBase result = infiniteLibLuMapper.selectByName(queryDataBase.getName());
         InfiniteLibOperationRecord record = new InfiniteLibOperationRecord();
         record.setName(queryDataBase.getName());

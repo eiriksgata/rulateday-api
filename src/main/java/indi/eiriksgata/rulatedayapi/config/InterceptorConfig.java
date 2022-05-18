@@ -1,6 +1,5 @@
 package indi.eiriksgata.rulatedayapi.config;
 
-import org.springframework.aop.framework.ProxyConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
 

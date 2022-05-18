@@ -4,8 +4,10 @@ import indi.eiriksgata.rulatedayapi.utils.RegularExpressionUtils;
 import indi.eiriksgata.rulatedayapi.utils.RestUtil;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * author: create by Keith
@@ -32,7 +34,6 @@ public class CollectionTest {
         String pictureUrl = formatItem.substring(5, formatItem.length() - 1);
 
 
-
         System.out.println(pictureUrl);
 
     }
@@ -50,5 +51,30 @@ public class CollectionTest {
         String url = "src=\"https://danbooru.donmai.us/data/original/2e/f9/__ethan_winters_resident_evil_and_1_more_drawn_by_lesle_kieu__2ef905d0def35e3127e8e2d2f60bcd8e.jpg\"";
         System.out.println(url.substring(4, url.length() - 1));
     }
+
+    @Test
+    void testString() {
+        TestStringEntity entity = new TestStringEntity();
+        entity.setA("1");
+        entity.setB("2");
+        swap(entity);
+        System.out.println(entity.getA() + entity.getB());
+    }
+
+    static void swap(TestStringEntity entity) {
+        String temp = entity.getB();
+        entity.setB(entity.getA());
+        entity.setA(temp);
+    }
+
+    @Test
+    void uuidTest() {
+
+        System.out.println(
+                new Timestamp(System.currentTimeMillis()).toString().substring(0,19)
+        );
+
+    }
+
 
 }

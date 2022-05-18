@@ -11,6 +11,9 @@ import lombok.Getter;
 @Getter
 public enum CommonBaseExceptionEnum {
 
+    //Game event enum
+    GAME_EVENT_NODE_DELETE_ERROR(10230, "删除节点失败，因为目前节点有下属节点，请先删除下属节点后再删除本节点"),
+
     DICE_EXCEPTION_COMMIT_ERROR(10010, "骰子异常数据提交失败"),
 
     DEVICE_FACE_PICTURE_MAX_ERROR(20204, "图片数据过大"),
