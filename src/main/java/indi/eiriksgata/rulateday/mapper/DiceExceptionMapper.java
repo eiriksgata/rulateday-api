@@ -20,7 +20,7 @@ import java.util.List;
 @Repository
 public interface DiceExceptionMapper extends BaseMapper<DiceException> {
 
-    @Select("select * from dice_exception")
+    @Select("select * from dice_exception order by created_timestamp desc")
     List<DiceException> selectAll();
 
 }

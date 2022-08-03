@@ -14,8 +14,7 @@
     <name>rulateday-api</name>
     <description>online server api</description>
     <properties>
-        <java.version>1.8</java.version>
-
+        <java.version>11</java.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- mybatis -->
@@ -125,6 +124,22 @@
             <artifactId>janino</artifactId>
             <version>3.1.6</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.Eiriksgata</groupId>
+            <artifactId>cache-java</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>23.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+
     </dependencies>
 
     <build>

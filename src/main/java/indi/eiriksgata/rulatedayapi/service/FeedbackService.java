@@ -13,7 +13,7 @@ public interface FeedbackService {
     @Transactional
     void addDiceExceptionRecord(String title, String content, long qqId);
 
-    PageInfo diceExceptionQuery(int pageNumber, int pageSize);
+    PageInfo<?> diceExceptionQuery(int pageNumber, int pageSize);
 
     @Transactional
     void deleteFeedback(Long id);

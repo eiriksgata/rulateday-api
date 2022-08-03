@@ -41,7 +41,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public PageInfo diceExceptionQuery(int pageNumber, int pageSize) {
+    public PageInfo<?> diceExceptionQuery(int pageNumber, int pageSize) {
         PageHelper.startPage(pageNumber, pageSize);
         return new PageInfo<>(diceExceptionMapper.selectAll());
     }

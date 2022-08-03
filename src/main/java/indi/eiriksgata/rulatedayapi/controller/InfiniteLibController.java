@@ -17,6 +17,7 @@ import java.util.List;
 @RestController
 @Api(tags = "无限团规则书库")
 @Slf4j
+@RequestMapping("/api/v1")
 public class InfiniteLibController {
 
     @Autowired

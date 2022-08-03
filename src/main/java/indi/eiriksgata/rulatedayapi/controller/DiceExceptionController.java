@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -26,16 +27,18 @@ public class DiceExceptionController {
 
     @PostMapping("/feedback/exception")
     public ResponseBean<?> feedbackException(@RequestBody DiceExceptionVo diceExceptionVo) {
-        feedbackService.addDiceExceptionRecord(
-                diceExceptionVo.getTitle(),
-                diceExceptionVo.getContent(),
-                diceExceptionVo.getQqId()
-        );
+        if (!diceExceptionVo.getTitle().equals("在事件处理中发生异常")) {
+            feedbackService.addDiceExceptionRecord(
+                    diceExceptionVo.getTitle(),
+                    diceExceptionVo.getContent(),
+                    diceExceptionVo.getQqId()
+            );
+        }
         return ResponseBean.success();
     }
 
 
-    @PostMapping("/feedback/query")
+    @PostMapping("/api/v1/feedback/query")
     public ResponseBean<?> feedbackQuery(@RequestBody PageHelperBean<String> data) {
         return ResponseBean.success(
                 feedbackService.diceExceptionQuery(data.getPageNumber(), data.getPageSize())
@@ -43,7 +46,7 @@ public class DiceExceptionController {
     }
 
 
-    @PostMapping("/feedback/delete")
+    @PostMapping("/api/v1/feedback/delete")
     public ResponseBean<?> feedbackDelete(@RequestBody FeedbackVo feedbackVo) {
         feedbackService.deleteFeedback(feedbackVo.getId());
         return ResponseBean.success();

@@ -11,6 +11,10 @@ import lombok.Getter;
 @Getter
 public enum CommonBaseExceptionEnum {
 
+    //login
+    ACCOUNTS_AUTHENTICATION_ERROR(10801, "账号密码错误"),
+
+    TOKEN_NOT_EXIST_ERR(10002, "凭证验证无法通过，请重新登陆"),
     //Game event enum
     GAME_EVENT_NODE_DELETE_ERROR(10230, "删除节点失败，因为目前节点有下属节点，请先删除下属节点后再删除本节点"),
 

@@ -6,6 +6,7 @@ import indi.eiriksgata.rulatedayapi.utils.RegularExpressionUtils;
 import indi.eiriksgata.rulatedayapi.utils.RestUtil;
 import indi.eiriksgata.rulatedayapi.vo.ResponseBean;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -24,10 +25,8 @@ import java.util.Random;
 @RestController
 public class CollectionController {
 
-
     @GetMapping("/picture/random")
     public ResponseBean<?> pictureRandom() {
-
         String url = "https://safebooru.donmai.us/posts?page=" + new Random().nextInt(999);
         String resultHtml = RestUtil.get(url);
         List<String> formatText = RegularExpressionUtils.getMatchers("href=\"/posts/[0-9]+\">", resultHtml);
@@ -40,11 +39,6 @@ public class CollectionController {
         String formatItem = RegularExpressionUtils.getMatcher("\\<img width=\"[0-9]+\" height=\"[0-9]+\".*>", resultHtml);
         formatItem = RegularExpressionUtils.getMatcher("src=\".*\"", formatItem);
         String pictureUrl = formatItem.substring(5, formatItem.length() - 1);
-
-        //使用代理服务
-//        System.getProperties().put("proxySet", "true");
-//        System.getProperties().put("proxyHost", "127.0.0.1");
-//        System.getProperties().put("proxyPort", "7890");
 
         try {
 
@@ -67,7 +61,5 @@ public class CollectionController {
             e.printStackTrace();
         }
         return ResponseBean.error("Server get picture fail.");
-
-
     }
 }
