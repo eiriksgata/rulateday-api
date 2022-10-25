@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 /**
  * author: create by Keith
@@ -22,9 +21,11 @@ public class CollectionTest {
 
         String url = "https://safebooru.donmai.us/posts?page=" + new Random().nextInt(1000);
         String resultHtml = RestUtil.get(url);
-        List<String> formatText = RegularExpressionUtils.getMatchers("\\<a href=\"/posts/[0-9]+\">", resultHtml);
+        System.out.println(resultHtml);
+
+        List<String> formatText = RegularExpressionUtils.getMatchers("\\<a class=\"post-preview-link\" draggable=\"false\" href=\"/posts/[0-9]+\".*\\>", resultHtml);
         String pictureId = RegularExpressionUtils.getMatcher("[0-9]+",
-                formatText.get(new Random().nextInt(20)));
+                formatText.get(new Random().nextInt(10)));
 
         //查找大图
         url = "https://safebooru.donmai.us/posts/" + pictureId;
@@ -53,26 +54,29 @@ public class CollectionTest {
     }
 
     @Test
-    void testString() {
-        TestStringEntity entity = new TestStringEntity();
-        entity.setA("1");
-        entity.setB("2");
-        swap(entity);
-        System.out.println(entity.getA() + entity.getB());
-    }
-
-    static void swap(TestStringEntity entity) {
-        String temp = entity.getB();
-        entity.setB(entity.getA());
-        entity.setA(temp);
-    }
-
-    @Test
     void uuidTest() {
 
         System.out.println(
-                new Timestamp(System.currentTimeMillis()).toString().substring(0,19)
+                new Timestamp(System.currentTimeMillis()).toString().substring(0, 19)
         );
+
+    }
+
+    @Test
+    void stringHandler() {
+        String str = "123456,";
+        String[] strList = str.split(",");
+        for (String temp : strList) {
+            System.out.println(temp);
+        }
+
+    }
+
+    @Test
+    void handlerSetCookie() {
+        String text = "_danbooru2_session=9aAM22nzV%2FuYmL5kCT9bX%2BlLM8gaSw%2BhTzjtAVgdLiRdXB5iyw3GlAd2OcZ1mrVbSCgTGwbCOfamLnpTky0fLmdkxkcncnTx1524BXhKBXIgPNMI%2BNSzOFhmkSZWBYk0R43vpM7qOLIk%2BVxhlJyRRUZ4uNDzHZ5oWopkmOrK%2BT47ieLWbeGWlKJhYHTQc3BD6aliGV1y8HVa94dI0TtQP7RtTrZCQr%2BEcl0NMuAZjaQxYEK3jkLU7P1T8eEpaZZAulFxYRtm4IR4kORrL0SeQbn9Km0myCViMNDxIN3bQ0%2BGBTRXKmu5cnhurUJvwTAXyMqTjXXU8u53ROpdNbmgDkvExNHEOX%2FtLmA1%2FddfmdhLUB1B6Zg%2FJY54mLbPl%2FcQ2goRlg%3D%3D--fmhCmWKnaO5bnt4m--AtgIffQVjtWylD%2BvP6JAsA%3D%3D; domain=.donmai.us; path=/; expires=Tue, 21 Oct 2042 02:23:49 GMT; secure; HttpOnly; SameSite=Lax";
+        String[] result = text.trim().split(";");
+        System.out.println(result[0]);
 
     }
 
