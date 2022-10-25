@@ -41,4 +41,5 @@ public class CommonBaseException extends RuntimeException {
         this.errCode = commonBaseExceptionEnum.getErrCode();
         this.errMsg = commonBaseExceptionEnum.getErrMsg();
     }
+
 }

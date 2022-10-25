@@ -22,6 +22,10 @@ public enum CommonBaseExceptionEnum {
 
     DEVICE_FACE_PICTURE_MAX_ERROR(20204, "图片数据过大"),
 
+    PICTURE_RANDOM_GEN_COOKIE_NULL(13051, "图片地址的请求Cookie为空"),
+
+    MACHINE_CODE_EXISTS(14010, "机器码已存在"),
+
     //解析错误
     DEVICE_DATA_PARSING_ERR(10100, "Device data parsing error"),
 

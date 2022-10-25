@@ -1,6 +1,8 @@
 package indi.eiriksgata.rulatedayapi.controller;
 
+import indi.eiriksgata.rulateday.pojo.RobotToken;
 import indi.eiriksgata.rulatedayapi.service.AuthService;
+import indi.eiriksgata.rulatedayapi.service.RobotTokenService;
 import indi.eiriksgata.rulatedayapi.vo.ResponseBean;
 import io.swagger.annotations.Api;
 import org.jetbrains.annotations.NotNull;
@@ -12,11 +14,14 @@ import javax.servlet.http.HttpServletResponse;
 
 @Api
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1")
 public class AuthController {
 
     @Autowired
     AuthService authService;
+
+    @Autowired
+    RobotTokenService robotTokenService;
 
     @PutMapping("/authentication")
     public ResponseBean<?> authentication(@NotNull HttpServletRequest httpServletRequest, @NotNull HttpServletResponse response) {
@@ -25,5 +30,23 @@ public class AuthController {
         response.setHeader("Authorization", authService.genCryptoData());
         return ResponseBean.success();
     }
+
+    @PutMapping("/robot/token")
+    public ResponseBean<?> robotTokenGen(@RequestBody RobotToken robotToken) {
+        robotTokenService.saveRobotToken(robotToken.getMachineCode(), robotToken.getExpirationAt(), robotToken.getDescription());
+        return ResponseBean.success();
+    }
+
+    @DeleteMapping("/robot/token/delete")
+    public ResponseBean<?> robotTokenDelete(@RequestBody RobotToken robotToken) {
+        robotTokenService.deleteRobotToken(robotToken.getId());
+        return ResponseBean.success();
+    }
+
+    @GetMapping("/robot/token/list")
+    public ResponseBean<?> getRobotTokenList() {
+        return ResponseBean.success(robotTokenService.selectAllRobotToken());
+    }
+
 
 }

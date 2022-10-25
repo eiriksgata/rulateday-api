@@ -1,5 +1,5 @@
 server:
-  port: 8089
+  port: 16467
   contextPath: /
 
 knife4j:
@@ -22,10 +22,11 @@ spring:
 
 
   profiles:
+    active:
     swagger: true
     authorization:
-      username: admin
-      password: admin
+      username: root
+      password: admin&admin
     cores: false
 
 pagehelper:

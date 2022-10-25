@@ -39,7 +39,7 @@ public class WebPathConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registration) {
         registration.addInterceptor(requestInterceptor)
                 .addPathPatterns("/api/v1/**")
-                .excludePathPatterns("/api/authentication");
+                .excludePathPatterns("/api/v1/authentication");
 
     }
 

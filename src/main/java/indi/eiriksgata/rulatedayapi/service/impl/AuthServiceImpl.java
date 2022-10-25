@@ -40,7 +40,6 @@ public class AuthServiceImpl implements AuthService {
         JSONObject requestJson = JSONObject.parseObject(new String(decode));
         long dataTimestamp = requestJson.getLongValue("timestamp");
         long currentTimestamp = System.currentTimeMillis();
-        System.out.println(requestJson);
         if (requestJson.getString("token").equals(genToken()) &&
                 dataTimestamp > currentTimestamp - 1000 * 60 * 5 &&
                 dataTimestamp < currentTimestamp + 1000 * 60 * 5
@@ -84,5 +83,6 @@ public class AuthServiceImpl implements AuthService {
     public String genToken() {
         return EncryptionUtil.sha256(username + "&" + password);
     }
+
 
 }

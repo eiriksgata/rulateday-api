@@ -41,7 +41,14 @@ public class RestUtil {
     }
 
     public static String get(String url) {
-        return HttpRequest.get(url).body();
+        HttpRequest request = HttpRequest.get(url);
+        return request.body();
+    }
+
+    public static String get(String url, Map<String, String> head) {
+        HttpRequest request = HttpRequest.get(url);
+        head.forEach(request::header);
+        return request.body();
     }
 
 

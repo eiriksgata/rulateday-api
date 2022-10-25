@@ -18,7 +18,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- mybatis -->
-        <mybatis.plus.version>3.2.0</mybatis.plus.version>
+        <mybatis.plus.version>3.5.2</mybatis.plus.version>
         <!-- druid -->
         <druid.version>1.1.21</druid.version>
         <druid.boot.version>1.1.21</druid.boot.version>
@@ -33,6 +33,16 @@
         <mybatis.plus.version>3.2.0</mybatis.plus.version>
 
     </properties>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://www.jitpack.io</url>
+        </repository>
+    </repositories>
+
+
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -43,6 +53,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
 
         <!-- lombok -->
@@ -71,7 +86,7 @@
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-spring-boot-starter</artifactId>
             <!--在引用时请在maven中央仓库搜索2.X最新版本号-->
-            <version>2.0.8</version>
+            <version>3.0.3</version>
         </dependency>
 
         <dependency>
@@ -116,7 +131,7 @@
         <dependency>
             <groupId>com.github.kevinsawicki</groupId>
             <artifactId>http-request</artifactId>
-            <version>5.6</version>
+            <version>6.0</version>
         </dependency>
 
         <dependency>
@@ -131,7 +146,6 @@
             <version>1.0.1</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
@@ -139,6 +153,23 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.teamdev.jxbrowser</groupId>
+            <artifactId>jxbrowser-win32</artifactId>
+            <version>7.12.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.teamdev.jxbrowser</groupId>
+            <artifactId>jxbrowser-swing</artifactId>
+            <version>7.12.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
+        </dependency>
 
     </dependencies>
 

@@ -3,6 +3,7 @@ package indi.eiriksgata.rulatedayapi;
 import indi.eiriksgata.rulatedayapi.utils.RegularExpressionUtils;
 import indi.eiriksgata.rulatedayapi.utils.RestUtil;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -77,8 +78,13 @@ public class CollectionTest {
         String text = "_danbooru2_session=9aAM22nzV%2FuYmL5kCT9bX%2BlLM8gaSw%2BhTzjtAVgdLiRdXB5iyw3GlAd2OcZ1mrVbSCgTGwbCOfamLnpTky0fLmdkxkcncnTx1524BXhKBXIgPNMI%2BNSzOFhmkSZWBYk0R43vpM7qOLIk%2BVxhlJyRRUZ4uNDzHZ5oWopkmOrK%2BT47ieLWbeGWlKJhYHTQc3BD6aliGV1y8HVa94dI0TtQP7RtTrZCQr%2BEcl0NMuAZjaQxYEK3jkLU7P1T8eEpaZZAulFxYRtm4IR4kORrL0SeQbn9Km0myCViMNDxIN3bQ0%2BGBTRXKmu5cnhurUJvwTAXyMqTjXXU8u53ROpdNbmgDkvExNHEOX%2FtLmA1%2FddfmdhLUB1B6Zg%2FJY54mLbPl%2FcQ2goRlg%3D%3D--fmhCmWKnaO5bnt4m--AtgIffQVjtWylD%2BvP6JAsA%3D%3D; domain=.donmai.us; path=/; expires=Tue, 21 Oct 2042 02:23:49 GMT; secure; HttpOnly; SameSite=Lax";
         String[] result = text.trim().split(";");
         System.out.println(result[0]);
-
     }
 
+
+    @Test
+    void encode() {
+       String result =  BCrypt.hashpw("5014138c10816c653dcee9ad9c011a4132d14a6cdca9950851f1eb8fd039b66d", BCrypt.gensalt());
+       System.out.println(result);
+    }
 
 }
