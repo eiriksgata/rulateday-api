@@ -1,5 +1,7 @@
 package indi.eiriksgata.rulateday.pojo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -9,7 +11,9 @@ import java.util.Date;
 @TableName("t_ai_text_draw_task")
 public class AiTextDrawTask {
 
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
+
     private Date createdAt;
     private String machineCode;
     private Date updatedAt;
@@ -34,5 +38,6 @@ public class AiTextDrawTask {
 
     private String leaveWord;
 
+    private Long createdById;
 
 }
