@@ -1,5 +1,7 @@
 package indi.eiriksgata.rulatedayapi;
 
+import indi.eiriksgata.dice.operation.RollBasics;
+import indi.eiriksgata.dice.operation.impl.RollBasicsImpl;
 import indi.eiriksgata.rulatedayapi.utils.RegularExpressionUtils;
 import indi.eiriksgata.rulatedayapi.utils.RestUtil;
 import org.junit.jupiter.api.Test;
@@ -83,8 +85,21 @@ public class CollectionTest {
 
     @Test
     void encode() {
-       String result =  BCrypt.hashpw("5014138c10816c653dcee9ad9c011a4132d14a6cdca9950851f1eb8fd039b66d", BCrypt.gensalt());
-       System.out.println(result);
+        String result = BCrypt.hashpw("5014138c10816c653dcee9ad9c011a4132d14a6cdca9950851f1eb8fd039b66d", BCrypt.gensalt());
+        System.out.println(result);
+    }
+
+
+    @Test
+    void getRandomText() {
+
+    }
+
+
+    @Test
+    void dice() {
+        String result = new RollBasicsImpl().rollRandom("d+5d+3d2+1d3+d+5d6+d", 1000000L);
+        System.out.println(result);
     }
 
 }

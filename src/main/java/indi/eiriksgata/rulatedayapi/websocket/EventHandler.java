@@ -1,33 +1,39 @@
 package indi.eiriksgata.rulatedayapi.websocket;
 
 import com.alibaba.fastjson.JSONObject;
-import indi.eiriksgata.rulatedayapi.service.AiDrawingService;
+import com.alibaba.fastjson.TypeReference;
+import indi.eiriksgata.rulatedayapi.service.AiDrawService;
+import indi.eiriksgata.rulatedayapi.websocket.vo.AiTextDrawGenVo;
+import indi.eiriksgata.rulatedayapi.websocket.vo.WsDataBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import static indi.eiriksgata.rulatedayapi.websocket.EventType.*;
 
 @Component
 public class EventHandler {
 
     @Autowired
-    AiDrawingService aiDrawingService;
+    AiDrawService aiDrawService;
 
-
-    public void implement(String text) {
+    public void implement(String userId, String text) {
         JSONObject jsonObject = JSONObject.parseObject(text);
         String eventType = jsonObject.getString("eventType");
-
         switch (eventType) {
-            case "ai_text_drawing_task":
-
+            case AI_TEXT_DRAW_TASK_CREATED:
+                addAiTextDrawingTask(userId, text);
+                break;
+            default:
                 break;
         }
-
-
     }
 
+    private void addAiTextDrawingTask(String userId, String text) {
+        WsDataBean<AiTextDrawGenVo> data = JSONObject.parseObject(text, new TypeReference<
+                WsDataBean<AiTextDrawGenVo>>() {
+        }.getType());
 
-    public void addAiDrawingTask() {
-
+        aiDrawService.addTextDrawingTask(userId, data);
     }
 
 }

@@ -1,12 +1,16 @@
 package indi.eiriksgata.rulatedayapi.websocket;
 
 import com.alibaba.fastjson.JSONObject;
+import indi.eiriksgata.rulatedayapi.exception.CommonBaseException;
+import indi.eiriksgata.rulatedayapi.exception.CommonBaseExceptionEnum;
+import indi.eiriksgata.rulatedayapi.utils.SpringContextUtil;
+import indi.eiriksgata.rulatedayapi.websocket.vo.WsDataBean;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -19,26 +23,22 @@ public class WsServerEndpoint {
 
     private String userId;
 
-    @Autowired
-    EventHandler eventHandler;
+    public Session session;
 
     /**
      * 连接成功
-     *
-     * @param session
      */
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
         session.setMaxIdleTimeout(1000 * 60);
         userId = (String) config.getUserProperties().get("userId");
         channelList.put(userId, this);
+        this.session = session;
         log.info("device link :" + userId + ";device list size:" + channelList.size());
     }
 
     /**
      * 连接关闭
-     *
-     * @param session
      */
     @OnClose
     public void onClose(Session session) {
@@ -48,19 +48,32 @@ public class WsServerEndpoint {
 
     /**
      * 接收到消息
-     *
-     * @param text
      */
     @OnMessage
     public void onMessage(String text) {
-        JSONObject jsonObject = JSONObject.parseObject(text);
-        String eventType = jsonObject.getString("eventType");
-        switch (eventType) {
+        EventHandler eventHandler = SpringContextUtil.getBean(EventHandler.class);
+        eventHandler.implement(userId, text);
 
+    }
+
+    public void sendMessage(String message) {
+        try {
+            this.session.getBasicRemote().sendText(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error(e.toString());
+            throw new CommonBaseException(CommonBaseExceptionEnum.ERROR);
         }
-        //WsRequestBean<?> requestBean = JSONObject.parseObject(text, )
+    }
 
-
+    public void sendMessage(WsDataBean<?> message) {
+        try {
+            this.session.getBasicRemote().sendText(JSONObject.toJSONString(message));
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error(e.toString());
+            throw new CommonBaseException(CommonBaseExceptionEnum.ERROR);
+        }
     }
 
     @OnError
