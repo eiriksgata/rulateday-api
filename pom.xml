@@ -99,7 +99,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.83</version>
+            <version>2.0.17</version>
         </dependency>
 
         <!-- Driver/Mybatis -->
@@ -147,18 +147,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.teamdev.jxbrowser</groupId>
-            <artifactId>jxbrowser-win32</artifactId>
-            <version>7.12.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.teamdev.jxbrowser</groupId>
-            <artifactId>jxbrowser-swing</artifactId>
-            <version>7.12.2</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.mindrot</groupId>
             <artifactId>jbcrypt</artifactId>
             <version>0.4</version>
@@ -184,7 +172,9 @@
                     <exclude>env/dev/*</exclude>
                     <exclude>env/uat/*</exclude>
                     <exclude>env/prod/*</exclude>
+                    <exclude>application-config.yaml</exclude>
                 </excludes>
+
             </resource>
 
         </resources>

@@ -1,5 +1,4 @@
 server:
-  port: 16467
   contextPath: /
 
 knife4j:
@@ -22,7 +21,7 @@ spring:
 
 
   profiles:
-    active:
+    active: config
     swagger: true
     authorization:
       username: root

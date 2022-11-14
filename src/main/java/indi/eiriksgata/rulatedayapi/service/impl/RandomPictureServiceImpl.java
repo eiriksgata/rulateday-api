@@ -1,5 +1,6 @@
 package indi.eiriksgata.rulatedayapi.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.kevinsawicki.http.HttpRequest;
 import indi.eiriksgata.rulatedayapi.service.RandomPictureService;
 import indi.eiriksgata.rulatedayapi.service.SystemSetService;
@@ -11,14 +12,10 @@ import indi.eiriksgata.rulatedayapi.vo.ResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class RandomPictureServiceImpl implements RandomPictureService {
@@ -27,8 +24,7 @@ public class RandomPictureServiceImpl implements RandomPictureService {
     SystemSetService systemSetService;
 
     @Override
-    public ResponseBean<String> collectionPicture() {
-
+    public ResponseBean<String> collectionPictureBySafebooru() {
         try {
             String url = "https://safebooru.donmai.us/posts?page=" + new Random().nextInt(999);
             Map<String, String> head = new HashMap<>();
@@ -76,7 +72,18 @@ public class RandomPictureServiceImpl implements RandomPictureService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return ResponseBean.error("Server get picture fail.");
+    }
 
+    @Override
+    public ResponseBean<String> collectionPictureByYinhua() {
+        String result = RestUtil.get("https://www.dmoe.cc/random.php?return=json");
+        JSONObject jsonObject = JSONObject.parseObject(result);
+        if (Objects.equals(jsonObject.getString("code"), "200")) {
+            return ResponseBean.success(
+                    jsonObject.getString("imgurl")
+            );
+        }
         return ResponseBean.error("Server get picture fail.");
     }
 
