@@ -26,7 +26,9 @@ spring:
     authorization:
       username: root
       password: admin&admin
+      enable: false
     cores: false
+
 
 pagehelper:
   helperDialect: sqlite
