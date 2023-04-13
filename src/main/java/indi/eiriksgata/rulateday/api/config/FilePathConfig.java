@@ -17,13 +17,12 @@ public class FilePathConfig implements WebMvcConfigurer {
     /*
      * 文件默认存储位置
      */
-    private static final String DEFAULT_FILE_PATH = System.getProperty("user.dir") + "\\data";
+    public static final String DEFAULT_FILE_PATH = System.getProperty("user.dir") + "\\resources";
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/data/**")
+        registry.addResourceHandler("/resources/**")
                 .addResourceLocations("file:\\" + DEFAULT_FILE_PATH + "\\\\");
-
     }
 
 }

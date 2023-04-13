@@ -31,7 +31,7 @@ public class SwaggerConfig {
                 .apiInfo(apiInfo())
                 .groupName("1.0.0")
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("indi.eiriksgata.rulatedayapi"))
+                .apis(RequestHandlerSelectors.basePackage("indi.eiriksgata.rulateday.api"))
                 .paths(PathSelectors.any())
                 .build()
                 .extensions(openApiExtensionResolver.buildExtensions("1.0.0"));
