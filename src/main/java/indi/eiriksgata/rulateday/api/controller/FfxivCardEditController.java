@@ -1,7 +1,7 @@
 package indi.eiriksgata.rulateday.api.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import indi.eiriksgata.rulateday.api.config.FilePathConfig;
+import indi.eiriksgata.rulateday.api.config.WebPathConfig;
 import indi.eiriksgata.rulateday.api.service.FfxivCardEditService;
 import indi.eiriksgata.rulateday.api.utils.ImageToBase64;
 import indi.eiriksgata.rulateday.api.vo.ResponseBean;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.FileInputStream;
+
 
 @RestController
 @Api
@@ -34,11 +35,11 @@ public class FfxivCardEditController {
         //保存卡面图片和图标数据
         if (ffxivCardVo.getPictureBase64() != null && !ffxivCardVo.getPictureBase64().equals("")) {
             ImageToBase64.base64ToImage(ffxivCardVo.getPictureBase64(),
-                    FilePathConfig.DEFAULT_FILE_PATH + "\\ffxiv\\surface\\" + ffxivCardVo.getCard().getCardCode() + ".png");
+                    WebPathConfig.DEFAULT_FILE_PATH + "/ffxiv/surface/" + ffxivCardVo.getCard().getCardCode() + ".png");
         }
         if (ffxivCardVo.getIconBase64() != null && !ffxivCardVo.getIconBase64().equals("")) {
             ImageToBase64.base64ToImage(ffxivCardVo.getIconBase64(),
-                    FilePathConfig.DEFAULT_FILE_PATH + "\\ffxiv\\surface_icon\\" + ffxivCardVo.getCard().getCardCode() + ".png");
+                    WebPathConfig.DEFAULT_FILE_PATH + "/ffxiv/surface_icon/" + ffxivCardVo.getCard().getCardCode() + ".png");
         }
         return ResponseBean.success();
     }

@@ -31,7 +31,11 @@ public class RequestInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest httpServletRequest, @NotNull HttpServletResponse httpServletResponse, @NotNull Object o) {
         String token = httpServletRequest.getHeader("Authorization");
         if (authorizationEnable) {
-            authService.cryptoHeadersVerification(token);
+            try {
+                authService.cryptoHeadersVerification(token);
+            } catch (Exception e) {
+                return false;
+            }
         }
         httpServletResponse.setHeader("Authorization", authService.genCryptoData());
         return true;

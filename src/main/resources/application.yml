@@ -1,6 +1,3 @@
-server:
-  contextPath: /
-
 knife4j:
   enable: true
   production: false

@@ -1,6 +1,7 @@
 package indi.eiriksgata.rulateday.api.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -22,14 +23,12 @@ public class WebPathConfig implements WebMvcConfigurer {
     /*
      * 文件默认存储位置
      */
-    private static final String DEFAULT_FILE_PATH = System.getProperty("user.dir") + "\\resources";
+    public static String DEFAULT_FILE_PATH = System.getProperty("user.dir") + "/resources";
 
-    /**
-     * 文件资源
-     */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/resources/**").addResourceLocations("file:\\" + DEFAULT_FILE_PATH + "\\\\");
+        registry.addResourceHandler("/resources/**")
+                .addResourceLocations("file:" + DEFAULT_FILE_PATH + "/");
     }
 
     /**

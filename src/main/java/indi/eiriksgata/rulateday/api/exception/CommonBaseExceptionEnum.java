@@ -46,6 +46,9 @@ public enum CommonBaseExceptionEnum {
 
     METHOD_ARGUMENT_NOT_VALID(10001, "接口请求参数异常"),
 
+    //Ffxiv exception enum
+    FFXIV_SCHEME_NODE_NOT_FOUNT_PARENT_ID(40001, "父节点不存在"),
+
     SUCCESS(0, "Operation Success"),
 
     ERROR(-1, "System Error"),

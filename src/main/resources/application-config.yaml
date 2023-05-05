@@ -1,4 +1,5 @@
 server:
   port: 16467
 
-
+resource:
+  path:

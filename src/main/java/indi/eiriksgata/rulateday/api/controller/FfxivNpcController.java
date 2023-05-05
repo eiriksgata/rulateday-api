@@ -1,6 +1,6 @@
 package indi.eiriksgata.rulateday.api.controller;
 
-import indi.eiriksgata.rulateday.api.config.FilePathConfig;
+import indi.eiriksgata.rulateday.api.config.WebPathConfig;
 import indi.eiriksgata.rulateday.api.service.FfxivNpcService;
 import indi.eiriksgata.rulateday.api.utils.ImageToBase64;
 import indi.eiriksgata.rulateday.api.vo.ResponseBean;
@@ -23,7 +23,7 @@ public class FfxivNpcController {
         FfxivNpcDTO result = ffxivNpcService.save(ffxivNpcDTO);
         if (ffxivNpcDTO.getPictureBase64() != null && !ffxivNpcDTO.getPictureBase64().equals("")) {
             ImageToBase64.base64ToImage(ffxivNpcDTO.getPictureBase64(),
-                    FilePathConfig.DEFAULT_FILE_PATH + "\\ffxiv\\npc\\" + result.getCode() + ".png");
+                    WebPathConfig.DEFAULT_FILE_PATH + "/ffxiv/npc/" + result.getCode() + ".png");
         }
         return ResponseBean.success();
     }
