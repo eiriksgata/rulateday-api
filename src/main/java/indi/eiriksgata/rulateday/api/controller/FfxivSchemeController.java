@@ -1,5 +1,6 @@
 package indi.eiriksgata.rulateday.api.controller;
 
+import indi.eiriksgata.rulateday.api.config.NotRequireAuthentication;
 import indi.eiriksgata.rulateday.api.service.FfxivSchemeNodeService;
 import indi.eiriksgata.rulateday.api.service.FfxivSchemeService;
 import indi.eiriksgata.rulateday.api.vo.ResponseBean;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Api
+@RequestMapping("/api/v1")
 public class FfxivSchemeController {
 
     @Autowired
@@ -23,11 +25,13 @@ public class FfxivSchemeController {
 
 
     @GetMapping("/ffxiv/scheme/query/all")
+    @NotRequireAuthentication
     public ResponseBean<?> ffxivSchemeQueryAll() {
         return ResponseBean.success(ffxivSchemeService.findAllScheme());
     }
 
     @PutMapping("/ffxiv/scheme/query/id")
+    @NotRequireAuthentication
     public ResponseBean<?> findSchemeById(@RequestBody FfxivSchemeDTO ffxivSchemeDTO) {
         return ResponseBean.success(
                 ffxivSchemeService.findById(ffxivSchemeDTO.getId())
@@ -35,6 +39,7 @@ public class FfxivSchemeController {
     }
 
     @PutMapping("/ffxiv/scheme/query/npc/id")
+    @NotRequireAuthentication
     public ResponseBean<?> findSchemeByNpcId(@RequestBody FfxivNpcDTO ffxivNpcDTO) {
         return ResponseBean.success(
                 ffxivSchemeService.findSchemeByNpcId(ffxivNpcDTO.getId())
@@ -43,6 +48,7 @@ public class FfxivSchemeController {
 
 
     @PutMapping("/ffxiv/scheme/cards/query/id")
+    @NotRequireAuthentication
     public ResponseBean<?> ffxivSchemeCardsBySchemeId(@RequestBody FfxivSchemeDTO ffxivSchemeDTO) {
         return ResponseBean.success(
                 ffxivSchemeService.findSchemeCards(ffxivSchemeDTO.getId())
@@ -69,6 +75,7 @@ public class FfxivSchemeController {
     }
 
     @PutMapping("/ffxiv/scheme/node/query/id")
+    @NotRequireAuthentication
     public ResponseBean<?> findFfxivSchemeNode(@RequestBody FfxivSchemeDTO ffxivSchemeDTO) {
         return ResponseBean.success(
                 ffxivSchemeNodeService.findSchemeNodeBySchemeId(ffxivSchemeDTO.getId())

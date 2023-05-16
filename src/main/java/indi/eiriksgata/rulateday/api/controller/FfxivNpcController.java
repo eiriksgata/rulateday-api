@@ -1,5 +1,6 @@
 package indi.eiriksgata.rulateday.api.controller;
 
+import indi.eiriksgata.rulateday.api.config.NotRequireAuthentication;
 import indi.eiriksgata.rulateday.api.config.WebPathConfig;
 import indi.eiriksgata.rulateday.api.service.FfxivNpcService;
 import indi.eiriksgata.rulateday.api.utils.ImageToBase64;
@@ -13,12 +14,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/v1")
 public class FfxivNpcController {
 
     @Autowired
     FfxivNpcService ffxivNpcService;
 
     @PutMapping("/ffxiv/npc")
+    @NotRequireAuthentication
     public ResponseBean<?> ffxivNpcDataAdd(@RequestBody FfxivNpcDTO ffxivNpcDTO) {
         FfxivNpcDTO result = ffxivNpcService.save(ffxivNpcDTO);
         if (ffxivNpcDTO.getPictureBase64() != null && !ffxivNpcDTO.getPictureBase64().equals("")) {
@@ -30,6 +33,7 @@ public class FfxivNpcController {
 
 
     @PutMapping("/ffxiv/npc/id")
+    @NotRequireAuthentication
     public ResponseBean<?> ffxivNpcInfoQuery(@RequestBody FfxivNpcDTO ffxivNpcDTO) {
         return ResponseBean.success(
                 ffxivNpcService.selectById(ffxivNpcDTO.getId())
@@ -37,6 +41,7 @@ public class FfxivNpcController {
     }
 
     @GetMapping("/ffxiv/npc")
+    @NotRequireAuthentication
     public ResponseBean<?> findAllFfxivNpcData() {
         return ResponseBean.success(
                 ffxivNpcService.selectAll()
@@ -47,11 +52,11 @@ public class FfxivNpcController {
     @PutMapping("/ffxiv/npc/cards/save")
     public ResponseBean<?> ffxivNpcCardSave(@RequestBody FfxivNpcCardsVo ffxivNpcCardsVo) {
         ffxivNpcService.saveCardRel(ffxivNpcCardsVo.getId(), ffxivNpcCardsVo.getCards());
-
         return ResponseBean.success();
     }
 
     @PutMapping("/ffxiv/npc/cards/query/id")
+    @NotRequireAuthentication
     public ResponseBean<List<FfxivCardDTO>> findCardsByNpcId(@RequestBody FfxivNpcDTO ffxivNpcDTO) {
         return ResponseBean.success(
                 ffxivNpcService.findNpcCards(ffxivNpcDTO.getId())

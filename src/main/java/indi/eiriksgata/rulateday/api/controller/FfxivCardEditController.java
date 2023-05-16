@@ -1,6 +1,7 @@
 package indi.eiriksgata.rulateday.api.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import indi.eiriksgata.rulateday.api.config.NotRequireAuthentication;
 import indi.eiriksgata.rulateday.api.config.WebPathConfig;
 import indi.eiriksgata.rulateday.api.service.FfxivCardEditService;
 import indi.eiriksgata.rulateday.api.utils.ImageToBase64;
@@ -20,6 +21,7 @@ import java.io.FileInputStream;
 @RestController
 @Api
 @Slf4j
+@RequestMapping("/api/v1")
 public class FfxivCardEditController {
 
     @Autowired
@@ -30,7 +32,6 @@ public class FfxivCardEditController {
 
     @PutMapping("/ffxiv/card/save")
     public ResponseBean<?> saveCard(@RequestBody FfxivCardVo ffxivCardVo) {
-
         ffxivCardEditService.save(ffxivCardVo.getCard());
         //保存卡面图片和图标数据
         if (ffxivCardVo.getPictureBase64() != null && !ffxivCardVo.getPictureBase64().equals("")) {
@@ -45,6 +46,7 @@ public class FfxivCardEditController {
     }
 
     @GetMapping("/ffxiv/card")
+    @NotRequireAuthentication
     public ResponseBean<?> getAllCard() {
         return ResponseBean.success(
                 ffxivCardEditService.selectAllCard()
