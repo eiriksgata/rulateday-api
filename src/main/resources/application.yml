@@ -23,7 +23,7 @@ spring:
     authorization:
       username: root
       password: admin&admin
-      enable: false
+      enable: true
     cores: false
 
 
