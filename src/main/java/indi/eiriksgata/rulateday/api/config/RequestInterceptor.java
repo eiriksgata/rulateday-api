@@ -1,9 +1,13 @@
 package indi.eiriksgata.rulateday.api.config;
 
+import com.alibaba.fastjson.JSONObject;
+import indi.eiriksgata.rulateday.api.exception.CommonBaseExceptionEnum;
 import indi.eiriksgata.rulateday.api.service.AuthService;
+import indi.eiriksgata.rulateday.api.vo.ResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -11,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 
 @Component
 public class RequestInterceptor implements HandlerInterceptor {
@@ -28,12 +34,19 @@ public class RequestInterceptor implements HandlerInterceptor {
      * false表示流程中断（如登录检查失败），不会继续调用其他的拦截器或处理器，此时我们需要通过response来产生响应；
      */
     @Override
-    public boolean preHandle(HttpServletRequest httpServletRequest, @NotNull HttpServletResponse httpServletResponse, @NotNull Object o) {
+    public boolean preHandle(@NotNull HttpServletRequest httpServletRequest, @NotNull HttpServletResponse httpServletResponse, @NotNull Object handler) {
+        NotRequireAuthentication notRequireAuthentication = ((HandlerMethod) handler).getMethod()
+                .getAnnotation(NotRequireAuthentication.class);
+        if (notRequireAuthentication != null) {
+            return true;
+        }
+
         String token = httpServletRequest.getHeader("Authorization");
         if (authorizationEnable) {
             try {
                 authService.cryptoHeadersVerification(token);
             } catch (Exception e) {
+                authenticationFailResponse(httpServletResponse);
                 return false;
             }
         }
@@ -56,4 +69,14 @@ public class RequestInterceptor implements HandlerInterceptor {
     public void afterCompletion(@NotNull HttpServletRequest httpServletRequest, @NotNull HttpServletResponse httpServletResponse, @NotNull Object o, Exception e) {
     }
 
+
+    private void authenticationFailResponse(HttpServletResponse httpServletResponse) {
+        httpServletResponse.setContentType("application/json; charset=utf-8");
+        try {
+            httpServletResponse.getWriter().print(
+                    JSONObject.toJSONString(
+                            ResponseBean.error(CommonBaseExceptionEnum.TOKEN_NOT_EXIST_ERR)));
+        } catch (IOException ignored) {
+        }
+    }
 }
