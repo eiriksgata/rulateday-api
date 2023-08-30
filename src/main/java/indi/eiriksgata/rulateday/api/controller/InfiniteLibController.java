@@ -1,10 +1,10 @@
 package indi.eiriksgata.rulateday.api.controller;
 
 import indi.eiriksgata.rulateday.api.service.InfiniteDataCollectionService;
-import indi.eiriksgata.rulateday.mapper.InfiniteLibLuMapper;
-import indi.eiriksgata.rulateday.mapper.InfiniteLibOperationRecordMapper;
-import indi.eiriksgata.rulateday.pojo.InfiniteLibOperationRecord;
-import indi.eiriksgata.rulateday.pojo.QueryDataBase;
+import indi.eiriksgata.rulateday.api.mapper.InfiniteLibLuMapper;
+import indi.eiriksgata.rulateday.api.mapper.InfiniteLibOperationRecordMapper;
+import indi.eiriksgata.rulateday.api.pojo.InfiniteLibOperationRecord;
+import indi.eiriksgata.rulateday.api.pojo.QueryDataBase;
 import indi.eiriksgata.rulateday.api.vo.ResponseBean;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;

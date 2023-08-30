@@ -1,8 +1,8 @@
 package indi.eiriksgata.rulateday.api.service;
 
 import indi.eiriksgata.rulateday.api.exception.CommonBaseException;
-import indi.eiriksgata.rulateday.pojo.ffxiv.FfxivCardDTO;
-import indi.eiriksgata.rulateday.pojo.ffxiv.FfxivNpcDTO;
+import indi.eiriksgata.rulateday.api.pojo.ffxiv.FfxivCardDTO;
+import indi.eiriksgata.rulateday.api.pojo.ffxiv.FfxivNpcDTO;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

@@ -2,12 +2,6 @@ package indi.eiriksgata.rulateday.api.exception;
 
 import lombok.Getter;
 
-/**
- * 统一异常码
- *
- * @author Snake
- * @date 2019/11/14
- */
 @Getter
 public enum CommonBaseExceptionEnum {
 
@@ -35,13 +29,11 @@ public enum CommonBaseExceptionEnum {
 
     DEVICE_REGISTER_AUTHORIZATION_LENGTH_ERR(30001, "The length of data submitted by device registration is incorrect"),
 
-    AUTH_INPUT_DIEVCE_CODE_ERR(30500, "Credential registration failed. The custom encoding of the device is incorrect"),
+    AUTH_INPUT_DEVICE_CODE_ERR(30500, "Credential registration failed. The custom encoding of the device is incorrect"),
 
     AUTH_ID_NOT_FOUNT(30501, "Registration credential id not found"),
 
-    AUTH_COMMNUTITY_NUMBER_NOT_FOUNT(30502, "Cell number not found"),
-
-    //plateform-server
+    //platform-server
     DEVICE_ID_NOT_FOUNT_ERR(30601, "The corresponding device information was not found"),
 
     METHOD_ARGUMENT_NOT_VALID(10001, "接口请求参数异常"),

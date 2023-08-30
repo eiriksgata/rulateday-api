@@ -1,6 +1,6 @@
 package indi.eiriksgata.rulateday.api.ai.draw;
 
-import indi.eiriksgata.rulateday.mapper.AiTextDrawMapper;
+import indi.eiriksgata.rulateday.api.mapper.AiTextDrawMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;

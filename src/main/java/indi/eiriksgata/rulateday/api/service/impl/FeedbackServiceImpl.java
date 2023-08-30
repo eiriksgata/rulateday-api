@@ -2,8 +2,8 @@ package indi.eiriksgata.rulateday.api.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import indi.eiriksgata.rulateday.mapper.DiceExceptionMapper;
-import indi.eiriksgata.rulateday.pojo.DiceException;
+import indi.eiriksgata.rulateday.api.mapper.DiceExceptionMapper;
+import indi.eiriksgata.rulateday.api.pojo.DiceException;
 import indi.eiriksgata.rulateday.api.exception.CommonBaseException;
 import indi.eiriksgata.rulateday.api.exception.CommonBaseExceptionEnum;
 import indi.eiriksgata.rulateday.api.service.FeedbackService;
@@ -12,12 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * author: create by Keith
- * version: v1.0
- * description: indi.eiriksgata.rulatedayapi.service.impl
- * date: 2021/5/20
- **/
 @Service
 public class FeedbackServiceImpl implements FeedbackService {
 

@@ -1,12 +1,20 @@
 package indi.eiriksgata.rulateday.api;
 
 import indi.eiriksgata.dice.operation.impl.RollBasicsImpl;
+import indi.eiriksgata.rulateday.api.utils.HexConvertUtil;
 import indi.eiriksgata.rulateday.api.utils.RegularExpressionUtils;
 import indi.eiriksgata.rulateday.api.utils.RestUtil;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.security.Key;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -101,4 +109,45 @@ public class CollectionTest {
         System.out.println(result);
     }
 
+
+    @Test
+    void time() {
+        String openTimeDateFortString = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date(
+                1685504575L * 1000
+        ));
+        System.out.println(openTimeDateFortString);
+
+    }
+
+    @Test
+    void pathTest() {
+        System.out.println(System.getProperty("user.dir") + java.io.File.separator + "images");
+    }
+
+    @Test
+    void formatCardNo() {
+        String serverDataCardNo = "0018347184";
+        DecimalFormat cardNoFormat = new DecimalFormat("0000000000");
+
+
+    }
+
+
+    @Test
+    void genJWT() {
+        //Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        Key key = Keys.hmacShaKeyFor(HexConvertUtil.hexStringToByteArray("bf8390759d67d4ea58383a2103060c50a7852e0eb430a7ff1b0691ad78c31bdf"));
+
+        System.out.println(HexConvertUtil.bytesToHex(key.getEncoded()));
+        String jws = Jwts.builder().setSubject("Keith").signWith(key).compact();
+        System.out.println(jws);
+        try {
+            String body = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jws).toString();
+            String result = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jws).getSignature();
+            System.out.println("success:" + body);
+        } catch (JwtException e) {
+            System.out.println("error");
+        }
+
+    }
 }

@@ -1,6 +1,6 @@
 package indi.eiriksgata.rulateday.api.controller;
 
-import indi.eiriksgata.rulateday.pojo.AiTextDrawTask;
+import indi.eiriksgata.rulateday.api.pojo.AiTextDrawTask;
 import indi.eiriksgata.rulateday.api.service.AiDrawService;
 import indi.eiriksgata.rulateday.api.vo.ResponseBean;
 import indi.eiriksgata.rulateday.api.vo.openapi.ClientAiDrawTaskResultVo;

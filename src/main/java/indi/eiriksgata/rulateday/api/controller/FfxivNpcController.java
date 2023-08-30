@@ -6,8 +6,8 @@ import indi.eiriksgata.rulateday.api.service.FfxivNpcService;
 import indi.eiriksgata.rulateday.api.utils.ImageToBase64;
 import indi.eiriksgata.rulateday.api.vo.ResponseBean;
 import indi.eiriksgata.rulateday.api.vo.ffxiv.FfxivNpcCardsVo;
-import indi.eiriksgata.rulateday.pojo.ffxiv.FfxivCardDTO;
-import indi.eiriksgata.rulateday.pojo.ffxiv.FfxivNpcDTO;
+import indi.eiriksgata.rulateday.api.pojo.ffxiv.FfxivCardDTO;
+import indi.eiriksgata.rulateday.api.pojo.ffxiv.FfxivNpcDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

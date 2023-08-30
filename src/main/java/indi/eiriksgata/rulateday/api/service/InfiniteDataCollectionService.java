@@ -1,6 +1,6 @@
 package indi.eiriksgata.rulateday.api.service;
 
-import indi.eiriksgata.rulateday.pojo.QueryDataBase;
+import indi.eiriksgata.rulateday.api.pojo.QueryDataBase;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

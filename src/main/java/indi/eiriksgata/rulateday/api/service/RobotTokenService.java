@@ -1,7 +1,7 @@
 package indi.eiriksgata.rulateday.api.service;
 
 import indi.eiriksgata.rulateday.api.exception.CommonBaseException;
-import indi.eiriksgata.rulateday.pojo.RobotToken;
+import indi.eiriksgata.rulateday.api.pojo.RobotToken;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;

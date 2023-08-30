@@ -2,8 +2,8 @@ package indi.eiriksgata.rulateday.api.controller;
 
 import indi.eiriksgata.rulateday.api.service.HumanNameService;
 import indi.eiriksgata.rulateday.api.vo.openapi.GenNameVo;
-import indi.eiriksgata.rulateday.mapper.InfiniteLibLuMapper;
-import indi.eiriksgata.rulateday.pojo.QueryDataBase;
+import indi.eiriksgata.rulateday.api.mapper.InfiniteLibLuMapper;
+import indi.eiriksgata.rulateday.api.pojo.QueryDataBase;
 import indi.eiriksgata.rulateday.api.vo.ResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,6 +1,6 @@
 package indi.eiriksgata.rulateday.api.vo.ffxiv;
 
-import indi.eiriksgata.rulateday.pojo.ffxiv.FfxivCardDTO;
+import indi.eiriksgata.rulateday.api.pojo.ffxiv.FfxivCardDTO;
 import lombok.Data;
 
 @Data

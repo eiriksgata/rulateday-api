@@ -3,8 +3,8 @@ package indi.eiriksgata.rulateday.api.service.impl;
 import indi.eiriksgata.rulateday.api.exception.CommonBaseException;
 import indi.eiriksgata.rulateday.api.exception.CommonBaseExceptionEnum;
 import indi.eiriksgata.rulateday.api.service.FfxivSchemeNodeService;
-import indi.eiriksgata.rulateday.mapper.FfxivSchemeNodeMapper;
-import indi.eiriksgata.rulateday.pojo.ffxiv.FfxivSchemeNodeDTO;
+import indi.eiriksgata.rulateday.api.mapper.FfxivSchemeNodeMapper;
+import indi.eiriksgata.rulateday.api.pojo.ffxiv.FfxivSchemeNodeDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,11 +48,21 @@ public class FfxivSchemeNodeServiceImpl implements FfxivSchemeNodeService {
             throw new CommonBaseException(CommonBaseExceptionEnum.FFXIV_SCHEME_NODE_NOT_FOUNT_PARENT_ID);
         }
 
-        ffxivSchemeNodeDTO.setFirst(-1);
-        ffxivSchemeNodeDTO.setId(null);
-        ffxivSchemeNodeDTO.setUpdatedAt(new Date());
-        ffxivSchemeNodeDTO.setCreatedAt(new Date());
-        ffxivSchemeNodeMapper.insert(ffxivSchemeNodeDTO);
+        //检查该节点是否已有相同的卡牌与位置相同的节点
+        FfxivSchemeNodeDTO temp = ffxivSchemeNodeMapper.selectBySchemeIdAndParentIdAndCardIdAndCardPosition(
+                ffxivSchemeNodeDTO.getSchemeId(),
+                ffxivSchemeNodeDTO.getParentId(),
+                ffxivSchemeNodeDTO.getCardId(),
+                ffxivSchemeNodeDTO.getCardPosition()
+        );
+        //如果存在则不再进行添加
+        if (temp == null) {
+            ffxivSchemeNodeDTO.setFirst(-1);
+            ffxivSchemeNodeDTO.setId(null);
+            ffxivSchemeNodeDTO.setUpdatedAt(new Date());
+            ffxivSchemeNodeDTO.setCreatedAt(new Date());
+            ffxivSchemeNodeMapper.insert(ffxivSchemeNodeDTO);
+        }
     }
 
     @Transactional(rollbackFor = CommonBaseException.class)

@@ -9,6 +9,7 @@ import indi.eiriksgata.rulateday.api.exception.CommonBaseExceptionEnum;
 import indi.eiriksgata.rulateday.api.utils.AES;
 import indi.eiriksgata.rulateday.api.utils.Base64;
 import indi.eiriksgata.rulateday.api.utils.EncryptionUtil;
+import indi.eiriksgata.rulateday.api.vo.LoginVo;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,15 +35,18 @@ public class AuthServiceImpl implements AuthService {
     String password;
 
     @Override
-    public void cryptoLoginVerification(@NotNull String cryptoData) {
+    public void loginVerification(@NotNull String cryptoData) {
         byte[] originalData = Base64.decode(cryptoData.getBytes(StandardCharsets.UTF_8));
         byte[] decode = AES.decrypt(originalData, key, iv);
-        JSONObject requestJson = JSONObject.parseObject(new String(decode));
-        long dataTimestamp = requestJson.getLongValue("timestamp");
+
+        LoginVo loginVo = JSONObject.parseObject(new String(decode), LoginVo.class);
+        long dataTimestamp = loginVo.getTimestamp();
         long currentTimestamp = System.currentTimeMillis();
-        if (requestJson.getString("token").equals(genToken()) &&
+
+
+        if (
                 dataTimestamp > currentTimestamp - 1000 * 60 * 5 &&
-                dataTimestamp < currentTimestamp + 1000 * 60 * 5
+                        dataTimestamp < currentTimestamp + 1000 * 60 * 5
         ) {
             return;
         }

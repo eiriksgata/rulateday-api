@@ -3,7 +3,7 @@ package indi.eiriksgata.rulateday.api.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import indi.eiriksgata.rulateday.api.vo.PageHelperBean;
-import indi.eiriksgata.rulateday.mapper.Dnd5ePhbDataMapper;
+import indi.eiriksgata.rulateday.api.mapper.Dnd5ePhbDataMapper;
 import indi.eiriksgata.rulateday.api.vo.ResponseBean;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

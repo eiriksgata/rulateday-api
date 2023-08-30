@@ -1,7 +1,7 @@
 package indi.eiriksgata.rulateday.api.controller;
 
-import indi.eiriksgata.rulateday.pojo.TrpgEventSchemaEntity;
-import indi.eiriksgata.rulateday.pojo.TrpgEventSchemaRelEntity;
+import indi.eiriksgata.rulateday.api.pojo.TrpgEventSchemaEntity;
+import indi.eiriksgata.rulateday.api.pojo.TrpgEventSchemaRelEntity;
 import indi.eiriksgata.rulateday.api.service.EventService;
 import indi.eiriksgata.rulateday.api.vo.EventContentQueryVo;
 import indi.eiriksgata.rulateday.api.vo.ResponseBean;

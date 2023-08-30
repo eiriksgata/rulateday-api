@@ -2,7 +2,7 @@ package indi.eiriksgata.rulateday.api.controller;
 
 import indi.eiriksgata.rulateday.api.service.AuthService;
 import indi.eiriksgata.rulateday.api.service.RobotTokenService;
-import indi.eiriksgata.rulateday.pojo.RobotToken;
+import indi.eiriksgata.rulateday.api.pojo.RobotToken;
 import indi.eiriksgata.rulateday.api.vo.ResponseBean;
 import io.swagger.annotations.Api;
 import org.jetbrains.annotations.NotNull;
@@ -26,9 +26,8 @@ public class AuthController {
     @PutMapping("/authentication")
     public ResponseBean<?> authentication(@NotNull HttpServletRequest httpServletRequest, @NotNull HttpServletResponse response) {
         String authorization = httpServletRequest.getHeader("Authorization");
-        authService.cryptoLoginVerification(authorization);
-        response.setHeader("Authorization", authService.genCryptoData());
-        return ResponseBean.success();
+        authService.loginVerification(authorization);
+        return ResponseBean.success(authService.genCryptoData());
     }
 
     @PutMapping("/robot/token")

@@ -1,9 +1,9 @@
 package indi.eiriksgata.rulateday.api.service.impl;
 
-import indi.eiriksgata.rulateday.mapper.TrpgEventSchemaMapper;
-import indi.eiriksgata.rulateday.mapper.TrpgEventSchemaRelMapper;
-import indi.eiriksgata.rulateday.pojo.TrpgEventSchemaEntity;
-import indi.eiriksgata.rulateday.pojo.TrpgEventSchemaRelEntity;
+import indi.eiriksgata.rulateday.api.mapper.TrpgEventSchemaMapper;
+import indi.eiriksgata.rulateday.api.mapper.TrpgEventSchemaRelMapper;
+import indi.eiriksgata.rulateday.api.pojo.TrpgEventSchemaEntity;
+import indi.eiriksgata.rulateday.api.pojo.TrpgEventSchemaRelEntity;
 import indi.eiriksgata.rulateday.api.exception.CommonBaseException;
 import indi.eiriksgata.rulateday.api.exception.CommonBaseExceptionEnum;
 import indi.eiriksgata.rulateday.api.service.EventService;

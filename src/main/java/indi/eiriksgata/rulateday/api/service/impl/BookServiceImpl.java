@@ -2,12 +2,12 @@ package indi.eiriksgata.rulateday.api.service.impl;
 
 import indi.eiriksgata.rulateday.api.exception.CommonBaseException;
 import indi.eiriksgata.rulateday.api.service.BookService;
-import indi.eiriksgata.rulateday.mapper.BookCategoryMapper;
-import indi.eiriksgata.rulateday.mapper.BookChapterMapper;
-import indi.eiriksgata.rulateday.mapper.BookListMapper;
-import indi.eiriksgata.rulateday.pojo.book.Book;
-import indi.eiriksgata.rulateday.pojo.book.BookCategory;
-import indi.eiriksgata.rulateday.pojo.book.BookChapter;
+import indi.eiriksgata.rulateday.api.mapper.BookCategoryMapper;
+import indi.eiriksgata.rulateday.api.mapper.BookChapterMapper;
+import indi.eiriksgata.rulateday.api.mapper.BookListMapper;
+import indi.eiriksgata.rulateday.api.pojo.book.Book;
+import indi.eiriksgata.rulateday.api.pojo.book.BookCategory;
+import indi.eiriksgata.rulateday.api.pojo.book.BookChapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

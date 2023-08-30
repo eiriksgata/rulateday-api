@@ -1,13 +1,13 @@
 package indi.eiriksgata.rulateday.api.controller;
 
-import indi.eiriksgata.rulateday.mapper.Dnd5ePhbDataMapper;
-import indi.eiriksgata.rulateday.mapper.InfiniteLibLuMapper;
-import indi.eiriksgata.rulateday.mapper.RuleBookMapper;
-import indi.eiriksgata.rulateday.pojo.QueryDataBase;
-import indi.eiriksgata.rulateday.pojo.RuleBook;
-import indi.eiriksgata.rulateday.pojo.book.Book;
-import indi.eiriksgata.rulateday.pojo.book.BookCategory;
-import indi.eiriksgata.rulateday.pojo.book.BookChapter;
+import indi.eiriksgata.rulateday.api.mapper.Dnd5ePhbDataMapper;
+import indi.eiriksgata.rulateday.api.mapper.InfiniteLibLuMapper;
+import indi.eiriksgata.rulateday.api.mapper.RuleBookMapper;
+import indi.eiriksgata.rulateday.api.pojo.QueryDataBase;
+import indi.eiriksgata.rulateday.api.pojo.RuleBook;
+import indi.eiriksgata.rulateday.api.pojo.book.Book;
+import indi.eiriksgata.rulateday.api.pojo.book.BookCategory;
+import indi.eiriksgata.rulateday.api.pojo.book.BookChapter;
 import indi.eiriksgata.rulateday.api.service.BookService;
 import indi.eiriksgata.rulateday.api.vo.ResponseBean;
 import io.swagger.annotations.Api;

@@ -2,8 +2,8 @@ package indi.eiriksgata.rulateday.api.service.impl;
 
 import indi.eiriksgata.rulateday.api.exception.CommonBaseException;
 import indi.eiriksgata.rulateday.api.service.FfxivCardEditService;
-import indi.eiriksgata.rulateday.mapper.FfxivCardEditMapper;
-import indi.eiriksgata.rulateday.pojo.ffxiv.FfxivCardDTO;
+import indi.eiriksgata.rulateday.api.mapper.FfxivCardEditMapper;
+import indi.eiriksgata.rulateday.api.pojo.ffxiv.FfxivCardDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -3,7 +3,7 @@ package indi.eiriksgata.rulateday.api.service;
 import indi.eiriksgata.rulateday.api.exception.CommonBaseException;
 import indi.eiriksgata.rulateday.api.vo.openapi.ClientAiDrawTaskResultVo;
 import indi.eiriksgata.rulateday.api.websocket.vo.AiTextDrawGenVo;
-import indi.eiriksgata.rulateday.pojo.AiTextDrawTask;
+import indi.eiriksgata.rulateday.api.pojo.AiTextDrawTask;
 import indi.eiriksgata.rulateday.api.websocket.vo.WsDataBean;
 import org.springframework.transaction.annotation.Transactional;
 

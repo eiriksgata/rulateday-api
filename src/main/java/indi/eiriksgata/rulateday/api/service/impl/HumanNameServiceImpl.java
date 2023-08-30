@@ -1,6 +1,6 @@
 package indi.eiriksgata.rulateday.api.service.impl;
 
-import indi.eiriksgata.rulateday.mapper.NamesCorpusMapper;
+import indi.eiriksgata.rulateday.api.mapper.NamesCorpusMapper;
 import indi.eiriksgata.rulateday.api.service.HumanNameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

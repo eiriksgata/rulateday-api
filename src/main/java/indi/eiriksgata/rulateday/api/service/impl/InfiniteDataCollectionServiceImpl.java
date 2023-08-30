@@ -1,10 +1,10 @@
 package indi.eiriksgata.rulateday.api.service.impl;
 
 import indi.eiriksgata.rulateday.api.service.InfiniteDataCollectionService;
-import indi.eiriksgata.rulateday.mapper.InfiniteLibLuMapper;
-import indi.eiriksgata.rulateday.mapper.InfiniteLibOperationRecordMapper;
-import indi.eiriksgata.rulateday.pojo.InfiniteLibOperationRecord;
-import indi.eiriksgata.rulateday.pojo.QueryDataBase;
+import indi.eiriksgata.rulateday.api.mapper.InfiniteLibLuMapper;
+import indi.eiriksgata.rulateday.api.mapper.InfiniteLibOperationRecordMapper;
+import indi.eiriksgata.rulateday.api.pojo.InfiniteLibOperationRecord;
+import indi.eiriksgata.rulateday.api.pojo.QueryDataBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
