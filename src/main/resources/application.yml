@@ -26,6 +26,13 @@ spring:
       enable: true
     cores: false
 
+  main:
+    allow-bean-definition-overriding: true
+
+jwt:
+  header: Authorization
+  expire: 604800
+  secret: bf8390759d67d4ea58383a2103060c50a7852e0eb430a7ff1b0691ad78c31bdf
 
 pagehelper:
   helperDialect: sqlite
