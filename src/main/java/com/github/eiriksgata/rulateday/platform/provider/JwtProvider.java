@@ -1,15 +1,15 @@
 package com.github.eiriksgata.rulateday.platform.provider;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.jwt.JWT;
+import com.github.eiriksgata.rulateday.platform.entity.UserDetail;
 import com.github.eiriksgata.rulateday.platform.jwt.JwtProperties;
 import com.github.eiriksgata.rulateday.platform.vo.AccessToken;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,14 +33,6 @@ public class JwtProvider {
     /**
      * 根据用户信息生成token
      */
-    public AccessToken generateToken(UserDetails userDetails) {
-        return generateToken(userDetails.getUsername());
-    }
-
-    /**
-     * 生成token
-     * 参数是我们想放入token中的字符串
-     */
     public AccessToken generateToken(String subject) {
         // 当前时间
         Date nowDate = new Date();
@@ -48,14 +40,15 @@ public class JwtProvider {
         // 过期时间
         Date expireDate = new Date(nowDate.getTime() + jwtProperties.getExpire() * 1000);
 
-
-        String token = JWT.create()
+        String token = jwtProperties.getPrefix() + Jwts.builder()
                 .setSubject(subject)
                 .setIssuedAt(nowDate)
-                .setExpiresAt(expireDate)
-                .setKey(
-                        jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8)
-                ).sign();
+                .setIssuer(jwtProperties.getIssuer())
+                .setExpiration(expireDate)
+                .signWith(
+                        SignatureAlgorithm.HS512,
+                        jwtProperties.getSecret()
+                ).compact();
 
         return AccessToken
                 .builder()
@@ -69,13 +62,42 @@ public class JwtProvider {
      * <p>
      * 反解析出token中信息，然后与参数中的信息比较，再校验过期时间
      *
-     * @param token       客户端传入的token
-     * @param userDetails 从数据库中查询出来的用户信息
+     * @param token      客户端传入的token
+     * @param userDetail 从数据库中查询出来的用户信息
      */
-    public boolean validateToken(String token, UserDetails userDetails) {
+    public boolean validateToken(String token, UserDetail userDetail) {
         Claims claims = getClaimsFromToken(token);
-        return claims.getSubject().equals(userDetails.getUsername()) && !isTokenExpired(claims);
+        return claims.getSubject().equals(userDetail.getUsername()) && !isTokenExpired(claims);
     }
+
+    /**
+     * 从token中获取主题
+     */
+    public String getSubjectFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        if (claims != null) {
+            return claims.getSubject();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 从token中拿到负载信息
+     */
+    private Claims getClaimsFromToken(String token) {
+        Claims claims = null;
+        try {
+            claims = Jwts.parser()
+                    .setSigningKey(jwtProperties.getSecret())
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            log.error("JWT反解析失败, token已过期或不正确, token : {}", token);
+        }
+        return claims;
+    }
+
 
 
     /**
@@ -109,42 +131,11 @@ public class JwtProvider {
     private boolean tokenRefreshJustBefore(Claims claims) {
         Date refreshDate = new Date();
         //刷新时间在创建时间的指定时间内
-        if (refreshDate.after(claims.getExpiration()) && refreshDate.before(
-                DateUtil.offsetSecond(claims.getExpiration(), 1800))) {
+        if (refreshDate.after(claims.getExpiration()) && refreshDate.before(DateUtil.offsetSecond(claims.getExpiration(), 1800))) {
             return true;
         }
         return false;
     }
-
-    /**
-     * 从token中拿到负载信息
-     */
-    private Claims getClaimsFromToken(String token) {
-        Claims claims = null;
-        try {
-            claims = Jwts.parser()
-                    .setSigningKey(jwtProperties.getSecret())
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (Exception e) {
-            log.error("JWT反解析失败, token已过期或不正确, token : {}", token);
-        }
-        return claims;
-    }
-
-
-    /**
-     * 从token中获取主题
-     */
-    public String getSubjectFromToken(String token) {
-        Claims claims = getClaimsFromToken(token);
-        if (claims != null) {
-            return claims.getSubject();
-        } else {
-            return null;
-        }
-    }
-
 
     /**
      * 判断token是否已经过期

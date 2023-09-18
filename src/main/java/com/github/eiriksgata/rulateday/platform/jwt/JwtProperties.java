@@ -12,6 +12,9 @@ public class JwtProperties {
     private Long expire = 604800L;
     private String secret = "bf8390759d67d4ea58383a2103060c50a7852e0eb430a7ff1b0691ad78c31bdf";
     private String prefix = "Bearer ";
+
+    private String issuer;
+
 }
 
 

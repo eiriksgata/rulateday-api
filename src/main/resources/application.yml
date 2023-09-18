@@ -12,7 +12,8 @@ spring:
     name: rulateday-api
 
   datasource:
-    url: jdbc:sqlite:data/rulateday-api.db
+    driver-class-name: org.sqlite.JDBC
+    url: jdbc:sqlite:data/rulateday-api.db?date_string_format=yyyy-MM-dd HH:mm:ss
     username:
     password:
 
@@ -32,7 +33,8 @@ spring:
 jwt:
   header: Authorization
   expire: 604800
-  secret: bf8390759d67d4ea58383a2103060c50a7852e0eb430a7ff1b0691ad78c31bdf
+  secret: f724c67180bf4495ba69b0a7af989a878ddf766ac5be4eebbd971997f9c0a413a4596e370414437eb3d9fa57eeba7c888858235c0a8642eea583acbb10c2dff1
+  issuer: api.rulatedaydice.top
 
 pagehelper:
   helperDialect: sqlite

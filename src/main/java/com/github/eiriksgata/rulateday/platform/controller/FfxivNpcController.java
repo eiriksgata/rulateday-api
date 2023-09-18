@@ -1,6 +1,5 @@
 package com.github.eiriksgata.rulateday.platform.controller;
 
-import com.github.eiriksgata.rulateday.platform.config.NotRequireAuthentication;
 import com.github.eiriksgata.rulateday.platform.config.WebPathConfig;
 import com.github.eiriksgata.rulateday.platform.service.FfxivNpcService;
 import com.github.eiriksgata.rulateday.platform.utils.ImageToBase64;
@@ -21,7 +20,6 @@ public class FfxivNpcController {
     FfxivNpcService ffxivNpcService;
 
     @PutMapping("/ffxiv/npc")
-    @NotRequireAuthentication
     public ResponseBean<?> ffxivNpcDataAdd(@RequestBody FfxivNpcDTO ffxivNpcDTO) {
         FfxivNpcDTO result = ffxivNpcService.save(ffxivNpcDTO);
         if (ffxivNpcDTO.getPictureBase64() != null && !ffxivNpcDTO.getPictureBase64().equals("")) {
@@ -33,7 +31,6 @@ public class FfxivNpcController {
 
 
     @PutMapping("/ffxiv/npc/id")
-    @NotRequireAuthentication
     public ResponseBean<?> ffxivNpcInfoQuery(@RequestBody FfxivNpcDTO ffxivNpcDTO) {
         return ResponseBean.success(
                 ffxivNpcService.selectById(ffxivNpcDTO.getId())
@@ -41,7 +38,6 @@ public class FfxivNpcController {
     }
 
     @GetMapping("/ffxiv/npc")
-    @NotRequireAuthentication
     public ResponseBean<?> findAllFfxivNpcData() {
         return ResponseBean.success(
                 ffxivNpcService.selectAll()
@@ -56,7 +52,6 @@ public class FfxivNpcController {
     }
 
     @PutMapping("/ffxiv/npc/cards/query/id")
-    @NotRequireAuthentication
     public ResponseBean<List<FfxivCardDTO>> findCardsByNpcId(@RequestBody FfxivNpcDTO ffxivNpcDTO) {
         return ResponseBean.success(
                 ffxivNpcService.findNpcCards(ffxivNpcDTO.getId())

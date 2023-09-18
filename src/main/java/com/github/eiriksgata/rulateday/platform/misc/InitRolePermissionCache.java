@@ -43,7 +43,8 @@ public class InitRolePermissionCache {
             role.getPermissions().forEach(permission -> {
                 permissionsMap.put(permission.getAction() + ":" + permission.getAlias(), permission);
             });
-            caffeineCache.put(CacheNameEnum.ROLES_PERMISSIONS, role.getCode(), permissionsMap);
+            caffeineCache.put(
+                    CacheNameEnum.ROLES_PERMISSIONS, role.getCode(), permissionsMap);
         });
     }
 

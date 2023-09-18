@@ -1,6 +1,5 @@
 package com.github.eiriksgata.rulateday.platform.entity;
 
-import com.github.eiriksgata.rulateday.platform.pojo.rbac.Permission;
 import com.github.eiriksgata.rulateday.platform.pojo.rbac.Role;
 import com.github.eiriksgata.rulateday.platform.pojo.rbac.User;
 import lombok.Data;
@@ -23,10 +22,6 @@ public class UserDetail implements Serializable, UserDetails {
     private List<Role> roleList;
 
     private List<String> roles;
-
-    private List<Permission> permissionList;
-
-    private List<String> permissions;
 
     public Long getUserId() {
         return this.user.getId();

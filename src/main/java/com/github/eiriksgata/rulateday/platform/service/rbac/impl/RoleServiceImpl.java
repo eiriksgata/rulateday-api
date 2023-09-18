@@ -11,11 +11,14 @@ import java.util.List;
 @Service("RoleService")
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements RoleService {
 
-
     @Override
     public List<Role> findAllRolePermission() {
         return getBaseMapper().selectAllRolePermission();
     }
 
+    @Override
+    public List<Role> selectRoleByUserId(Long userId) {
+        return getBaseMapper().selectByUserId(userId);
+    }
 
 }

@@ -1,5 +1,7 @@
 package com.github.eiriksgata.rulateday.platform.misc;
 
+import com.github.eiriksgata.rulateday.platform.provider.CustomAuthenticationProvider;
+import com.github.eiriksgata.rulateday.platform.service.impl.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,12 +10,15 @@ import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.vote.UnanimousBased;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -29,6 +34,12 @@ import java.util.List;
         jsr250Enabled = true)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    CustomAuthenticationProvider customAuthenticationProvider;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -39,6 +50,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 放行登录方法
                 .antMatchers("/api/auth/login").permitAll()
                 .antMatchers("/api/anon").permitAll()
+                .antMatchers("/doc.html").permitAll()
+                .antMatchers("/api/v1/authentication").permitAll()
+                .antMatchers("/webjars/**").permitAll()
+                .antMatchers("/swagger-resources").permitAll()
+                .antMatchers("/resources/**").permitAll()
+                .antMatchers("/v2/**").permitAll()
                 // 其他请求都需要认证后才能访问
                 .anyRequest().authenticated()
                 // 使用自定义的 accessDecisionManager
@@ -50,15 +67,30 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(restAuthenticationEntryPoint())
                 .and()
                 // 将自定义的JWT过滤器放到过滤链中
-                .addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(
+                        jwtAuthenticationTokenFilter(),
+                        UsernamePasswordAuthenticationFilter.class)
+
                 // 打开Spring Security的跨域
                 .cors()
                 .and()
                 // 关闭CSRF
                 .csrf().disable()
-                // 关闭Session机制
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+                // 关闭Session机制
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(customAuthenticationProvider);
     }
 
     @Bean
@@ -77,6 +109,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
+    @Override
     public AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManager();
     }

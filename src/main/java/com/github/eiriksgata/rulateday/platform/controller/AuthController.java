@@ -25,7 +25,7 @@ public class AuthController {
 
     @PutMapping("/authentication")
     public ResponseBean<?> authentication(@NotNull HttpServletRequest httpServletRequest, @NotNull HttpServletResponse response) {
-        String authorization = httpServletRequest.getHeader("Authorization");
+        String authorization = httpServletRequest.getHeader("Secret");
         return ResponseBean.success(authService.loginVerification(authorization));
     }
 

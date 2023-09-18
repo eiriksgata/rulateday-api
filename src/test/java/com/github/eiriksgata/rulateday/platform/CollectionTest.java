@@ -1,5 +1,7 @@
 package com.github.eiriksgata.rulateday.platform;
 
+import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.LineCaptcha;
 import indi.eiriksgata.dice.operation.impl.RollBasicsImpl;
 import com.github.eiriksgata.rulateday.platform.utils.RestUtil;
 import org.junit.jupiter.api.Test;
@@ -9,6 +11,7 @@ import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 public class CollectionTest {
 
@@ -93,5 +96,40 @@ public class CollectionTest {
         System.out.println("自动补0:" + cardNoFormat.format(Long.parseLong(serverDataCardNo)));
     }
 
+    @Test
+    void passwordTest() {
+        //定义图形验证码的长和宽
+        LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(200, 100);
+
+        //图形验证码写出，可以写出到文件，也可以写出到流
+        lineCaptcha.write("g:/line.png");
+        //输出code
+        System.out.println(lineCaptcha.getCode());
+        //验证图形验证码的有效性，返回boolean值
+        lineCaptcha.verify("1234");
+
+        //重新生成验证码
+        lineCaptcha.createCode();
+        lineCaptcha.write("d:/line.png");
+
+        //新的验证码
+        System.out.println(lineCaptcha.getCode());
+        //验证图形验证码的有效性，返回boolean值
+        lineCaptcha.verify("1234");
+    }
+
+    @Test
+    void genJwtKey() {
+        //生成jwt随机key
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < 4; i++) {
+            stringBuilder.append(
+                    UUID.randomUUID().toString().replaceAll("-", "")
+            );
+        }
+        System.out.println(
+                stringBuilder
+        );
+    }
 
 }

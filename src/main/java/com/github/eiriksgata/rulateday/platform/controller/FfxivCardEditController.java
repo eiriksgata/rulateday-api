@@ -1,7 +1,6 @@
 package com.github.eiriksgata.rulateday.platform.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.eiriksgata.rulateday.platform.config.NotRequireAuthentication;
 import com.github.eiriksgata.rulateday.platform.config.WebPathConfig;
 import com.github.eiriksgata.rulateday.platform.service.FfxivCardEditService;
 import com.github.eiriksgata.rulateday.platform.utils.ImageToBase64;
@@ -46,7 +45,6 @@ public class FfxivCardEditController {
     }
 
     @GetMapping("/ffxiv/card")
-    @NotRequireAuthentication
     public ResponseBean<?> getAllCard() {
         return ResponseBean.success(
                 ffxivCardEditService.selectAllCard()
