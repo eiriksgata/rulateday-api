@@ -35,9 +35,9 @@ public class UserDetail implements Serializable, UserDetails {
         List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
         List<String> authorities = new ArrayList<>();
         roleList.forEach(role -> {
-            authorities.add(role.getName());
+            authorities.add(role.getCode());
             grantedAuthorities.add(new SimpleGrantedAuthority(
-                    "ROLE_" + role.getName()
+                    "ROLE_" + role.getCode()
             ));
         });
         this.grantedAuthorities = grantedAuthorities;

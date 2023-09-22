@@ -8,8 +8,10 @@ public enum CommonBaseExceptionEnum {
     //login
     ACCOUNTS_AUTHENTICATION_ERROR(10801, "账号密码错误"),
 
+    ACCOUNTS_CAPTCHA_CODE_ERROR(10802, "验证码不正确"),
 
     TOKEN_NOT_EXIST_ERR(10002, "凭证验证无法通过，请重新登陆"),
+
 
     TOKEN_NOT_ACCESS_ERR(120001, "无访问权限"),
     //Game event enum

@@ -1,15 +1,11 @@
 package com.github.eiriksgata.rulateday.platform.service.impl;
 
 import cn.hutool.core.codec.Base64;
-import cn.hutool.crypto.CipherMode;
-import cn.hutool.crypto.Mode;
-import cn.hutool.crypto.Padding;
 import cn.hutool.crypto.symmetric.AES;
-import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
-import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.alibaba.fastjson.JSONObject;
 import com.github.eiriksgata.rulateday.platform.bean.UserAuthentication;
 import com.github.eiriksgata.rulateday.platform.cache.Cache;
+import com.github.eiriksgata.rulateday.platform.cache.CaptchaCache;
 import com.github.eiriksgata.rulateday.platform.constant.CacheNameEnum;
 import com.github.eiriksgata.rulateday.platform.entity.UserDetail;
 import com.github.eiriksgata.rulateday.platform.exception.CommonBaseException;
@@ -17,7 +13,6 @@ import com.github.eiriksgata.rulateday.platform.exception.CommonBaseExceptionEnu
 import com.github.eiriksgata.rulateday.platform.mapper.UserMapper;
 import com.github.eiriksgata.rulateday.platform.provider.JwtProvider;
 import com.github.eiriksgata.rulateday.platform.service.AuthService;
-import com.github.eiriksgata.rulateday.platform.utils.ExceptionUtils;
 import com.github.eiriksgata.rulateday.platform.utils.HexConvertUtil;
 import com.github.eiriksgata.rulateday.platform.vo.AccessToken;
 import com.github.eiriksgata.rulateday.platform.vo.LoginVo;
@@ -27,12 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
-import java.security.AuthProvider;
 
 @Service
 @Slf4j
@@ -57,6 +50,9 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     Cache caffeineCache;
 
+    @Autowired
+    CaptchaCache captchaCache;
+
     @Override
     public AccessToken loginVerification(@NotNull String cryptoData) {
         byte[] originalData = Base64.decode(cryptoData.getBytes(StandardCharsets.UTF_8));
@@ -72,6 +68,15 @@ public class AuthServiceImpl implements AuthService {
             throw new CommonBaseException(CommonBaseExceptionEnum.ACCOUNTS_AUTHENTICATION_ERROR);
         }
 
+        //认证验证码
+
+        if (!captchaCache.checkCode(loginVo.getUsername(), loginVo.getCaptcha())) {
+            throw new CommonBaseException(CommonBaseExceptionEnum.ACCOUNTS_CAPTCHA_CODE_ERROR);
+        } else {
+            captchaCache.remove(loginVo.getUsername());
+        }
+
+
         // 1 创建UsernamePasswordAuthenticationToken
         UserAuthentication usernameAuthentication = new UserAuthentication(
                 loginVo.getUsername(), loginVo.getPassword()
@@ -80,14 +85,16 @@ public class AuthServiceImpl implements AuthService {
         Authentication authentication = authenticationManager.authenticate(usernameAuthentication);
         // 3 保存认证信息
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        // 4 生成自定义token
-        AccessToken accessToken = jwtProvider.generateToken(((UserDetail) authentication.getPrincipal()).getUsername());
 
+        //获取用户信息
         UserDetail userDetail = (UserDetail) authentication.getPrincipal();
+
+        // 4 生成自定义token
+        AccessToken accessToken = jwtProvider.generateToken(userDetail.getUsername(), userDetail.getRoles());
+
         // 放入缓存
         caffeineCache.put(CacheNameEnum.USER, userDetail.getUsername(), userDetail);
 
-        System.out.println(accessToken);
         return accessToken;
     }
 

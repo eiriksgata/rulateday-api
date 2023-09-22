@@ -20,7 +20,7 @@ public interface RoleMapper extends BaseMapper<Role> {
     @Select("select * from t_rbac_role name like %#{name}%")
     List<Role> selectLikeName(@Param("name") String name);
 
-    @Select("SELECT r.id,r.name,r.intro,r.created_at,r.updated_at\n" +
+    @Select("SELECT r.id,r.name,r.code,r.intro,r.created_at,r.updated_at\n" +
             "FROM t_rbac_rel_ur ur\n" +
             "INNER JOIN t_rbac_user u ON ur.user_id = u.id\n" +
             "INNER JOIN t_rbac_role r ON ur.role_id = r.id\n" +

@@ -5,16 +5,23 @@ import com.github.eiriksgata.rulateday.platform.entity.UserDetail;
 import com.github.eiriksgata.rulateday.platform.jwt.JwtProperties;
 import com.github.eiriksgata.rulateday.platform.vo.AccessToken;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 
 
+import java.security.Key;
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 @Slf4j
 @Component
@@ -33,22 +40,24 @@ public class JwtProvider {
     /**
      * 根据用户信息生成token
      */
-    public AccessToken generateToken(String subject) {
+    public AccessToken generateToken(String subject, List<String> roles) {
         // 当前时间
         Date nowDate = new Date();
 
         // 过期时间
         Date expireDate = new Date(nowDate.getTime() + jwtProperties.getExpire() * 1000);
 
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", roles);
+
         String token = jwtProperties.getPrefix() + Jwts.builder()
                 .setSubject(subject)
                 .setIssuedAt(nowDate)
                 .setIssuer(jwtProperties.getIssuer())
                 .setExpiration(expireDate)
-                .signWith(
-                        SignatureAlgorithm.HS512,
-                        jwtProperties.getSecret()
-                ).compact();
+                .addClaims(claims)
+                .signWith(Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8)))
+                .compact();
 
         return AccessToken
                 .builder()
@@ -88,16 +97,16 @@ public class JwtProvider {
     private Claims getClaimsFromToken(String token) {
         Claims claims = null;
         try {
-            claims = Jwts.parser()
-                    .setSigningKey(jwtProperties.getSecret())
-                    .parseClaimsJws(token)
+            Jwts.parserBuilder()
+                    .setSigningKey(Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8)))
+                    .build()
+                    .parse(token)
                     .getBody();
         } catch (Exception e) {
             log.error("JWT反解析失败, token已过期或不正确, token : {}", token);
         }
         return claims;
     }
-
 
 
     /**
@@ -121,7 +130,7 @@ public class JwtProvider {
                     .expirationTime(claims.getExpiration())
                     .build();
         } else {
-            return generateToken(claims.getSubject());
+            return generateToken(claims.getSubject(), (List<String>) claims.get("roles"));
         }
     }
 

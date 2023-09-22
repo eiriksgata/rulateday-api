@@ -2,6 +2,7 @@ package com.github.eiriksgata.rulateday.platform.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.eiriksgata.rulateday.platform.mapper.UserMapper;
+import com.github.eiriksgata.rulateday.platform.misc.IgnoreAuthentication;
 import com.github.eiriksgata.rulateday.platform.service.RandomPictureService;
 import com.github.eiriksgata.rulateday.platform.vo.ResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ public class CollectionController {
 
 
     @GetMapping("/picture/random")
+    @IgnoreAuthentication
     public ResponseBean<?> pictureRandom() {
         return ResponseBean.error("没有实现");
     }

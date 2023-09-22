@@ -7,5 +7,7 @@ public class LoginVo {
 
     private String username;
     private String password;
+
+    private String captcha;
     private long timestamp;
 }

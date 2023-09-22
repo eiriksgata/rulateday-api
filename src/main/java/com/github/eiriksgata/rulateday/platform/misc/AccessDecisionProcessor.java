@@ -30,7 +30,7 @@ public class AccessDecisionProcessor implements AccessDecisionVoter<FilterInvoca
         // 拿到当前请求uri
         String requestUrl = object.getRequestUrl();
         String method = object.getRequest().getMethod();
-        log.info("进入自定义鉴权投票器，URI : {} {}", method, requestUrl);
+        //log.info("进入自定义鉴权投票器，URI : {} {}", method, requestUrl);
 
         String key = method + ":" + requestUrl;
         // 如果没有缓存中没有此权限也就是未保护此API，弃权

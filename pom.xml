@@ -14,6 +14,8 @@
     <name>rulateday-api</name>
     <description>online server api</description>
     <properties>
+        <spring-boot.version>2.4.5</spring-boot.version>
+
         <java.version>11</java.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -46,11 +48,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
 
         <dependency>
@@ -204,12 +208,18 @@
             <artifactId>commons-codec</artifactId>
             <version>1.11</version>
         </dependency>
+
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.7</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.Eiriksgata</groupId>
+            <artifactId>cache-java</artifactId>
+            <version>1.0.2</version>
+        </dependency>
 
 
     </dependencies>
@@ -237,6 +247,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
             </plugin>
         </plugins>
     </build>
