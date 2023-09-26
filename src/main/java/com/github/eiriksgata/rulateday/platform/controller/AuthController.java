@@ -3,11 +3,15 @@ package com.github.eiriksgata.rulateday.platform.controller;
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.LineCaptcha;
 import com.github.eiriksgata.rulateday.platform.cache.CaptchaCache;
+import com.github.eiriksgata.rulateday.platform.cache.SliderCaptchaCache;
+import com.github.eiriksgata.rulateday.platform.entity.TemplateCutResult;
+import com.github.eiriksgata.rulateday.platform.exception.CommonBaseExceptionEnum;
 import com.github.eiriksgata.rulateday.platform.misc.IgnoreAuthentication;
 import com.github.eiriksgata.rulateday.platform.provider.JwtProvider;
 import com.github.eiriksgata.rulateday.platform.service.AuthService;
 import com.github.eiriksgata.rulateday.platform.service.RobotTokenService;
 import com.github.eiriksgata.rulateday.platform.pojo.RobotToken;
+import com.github.eiriksgata.rulateday.platform.utils.VerifyImageUtil;
 import com.github.eiriksgata.rulateday.platform.vo.AccessToken;
 import com.github.eiriksgata.rulateday.platform.vo.ResponseBean;
 import com.github.eiriksgata.rulateday.platform.vo.openapi.GenCaptchaVo;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 
 @Api
 @RestController
@@ -32,6 +37,9 @@ public class AuthController {
 
     @Autowired
     CaptchaCache captchaCache;
+
+    @Autowired
+    SliderCaptchaCache sliderCaptchaCache;
 
     @Autowired
     JwtProvider jwtProvider;
@@ -56,19 +64,39 @@ public class AuthController {
         return ResponseBean.success();
     }
 
-    @GetMapping("/generate/captcha/{username}")
-    @IgnoreAuthentication
-    public ResponseBean<?> generateCaptcha(@PathVariable("username") String username) {
-        //定义图形验证码的长和宽
-        LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(
-                200, 50);
-        captchaCache.put(username, lineCaptcha.getCode());
-        return ResponseBean.success(GenCaptchaVo.builder()
-                .codeId(username)
-                .pictureBase64(lineCaptcha.getImageBase64())
-                .build());
-    }
+//    @GetMapping("/generate/captcha/{username}")
+//    @IgnoreAuthentication
+//    public ResponseBean<?> generateCaptcha(@PathVariable("username") String username) {
+//        //定义图形验证码的长和宽
+//        LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(
+//                200, 50);
+//        captchaCache.put(username, lineCaptcha.getCode());
+//        return ResponseBean.success(GenCaptchaVo.builder()
+//                .codeId(username)
+//                .pictureBase64(lineCaptcha.getImageBase64())
+//                .build());
+//    }
 
+    @GetMapping("/generate/slider/captcha/{username}")
+    @IgnoreAuthentication
+    public ResponseBean<?> generateSliderCaptcha(@PathVariable("username") String username) {
+        File backgroundPicture = new File("resources/verify/background/1.jpg");
+        File templatePicture = new File("resources/verify/template/1.png");
+        try {
+            TemplateCutResult result = VerifyImageUtil.pictureTemplatesCut(templatePicture, backgroundPicture);
+            sliderCaptchaCache.put(username, result);
+            return ResponseBean.success(
+                    TemplateCutResult.builder()
+                            .slider(result.getSlider())
+                            .background(result.getBackground())
+                            .yHeight(result.getYHeight())
+                            .build()
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseBean.error("生成验证码信息错误。");
+        }
+    }
 
     @PutMapping("/robot/token")
     public ResponseBean<?> robotTokenGen(@RequestBody RobotToken robotToken) {

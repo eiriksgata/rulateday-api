@@ -27,7 +27,6 @@ public interface RoleMapper extends BaseMapper<Role> {
             "WHERE u.id = #{userId}")
     List<Role> selectByUserId(@Param("userId") Long userId);
 
-
     @Results({
             @Result(column = "id", property = "id"),
             @Result(column = "name", property = "name"),
@@ -41,4 +40,25 @@ public interface RoleMapper extends BaseMapper<Role> {
     })
     @Select("select * from t_rbac_role")
     List<Role> selectAllRolePermission();
+
+    @Select("select * from t_rbac_role")
+    List<Role> selectAllRole();
+
+    @Results({
+            @Result(column = "id", property = "id"),
+            @Result(column = "name", property = "name"),
+            @Result(column = "code", property = "code"),
+            @Result(column = "intro", property = "intro"),
+            @Result(column = "created_at", property = "createdAt"),
+            @Result(column = "updated_at", property = "updatedAt"),
+            @Result(property = "permissions", column = "id", javaType = List.class,
+                    many = @Many(select = "com.github.eiriksgata.rulateday.platform.PermissionMapper.selectByRoleId")
+            )
+    })
+    @Select("select * from t_rbac_role where id =#{roleId}")
+    List<Role> selectRolePermissionByRoleId(@Param("roleId") Long roleId);
+
+
+
+
 }

@@ -9,4 +9,14 @@ public interface RoleService extends IService<Role> {
     List<Role> findAllRolePermission();
 
     List<Role> selectRoleByUserId(Long userId);
+
+    void roleCreate(Role role);
+
+    void roleUpdate(Role role);
+
+    Role roleQuery(Long roleId);
+
+    List<Role> getRoles();
+
+    void deleteById(Long roleId);
 }
