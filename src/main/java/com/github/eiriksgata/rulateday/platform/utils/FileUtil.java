@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * author: create by Keith
  * version: v1.0
- * description: indi.eiriksgata.rulateday.utlis
+ * description: com.github.eiriksgata.rulateday.utlis
  * date: 2020/11/26
  **/
 public class FileUtil {

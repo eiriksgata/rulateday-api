@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * author: create by Keith
  * version: v1.0
- * description: indi.eiriksgata.rulatedayapi.controller
+ * description: com.github.eiriksgata.rulatedayapi.controller
  * date: 2021/6/8
  **/
 @RestController

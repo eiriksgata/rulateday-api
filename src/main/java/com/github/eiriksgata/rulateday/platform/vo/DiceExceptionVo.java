@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * author: create by Keith
  * version: v1.0
- * description: indi.eiriksgata.rulatedayapi.vo
+ * description: com.github.eiriksgata.rulatedayapi.vo
  * date: 2021/5/20
  **/
 @Data

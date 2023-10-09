@@ -6,7 +6,7 @@ import java.io.PrintStream;
 /**
  * @author: create by Keith
  * @version: v1.0
- * @description: indi.eiriksgata.trpgservice.utils
+ * @description: com.github.eiriksgata.trpgservice.utils
  * @date:2020/5/6
  **/
 public class ExceptionUtils {

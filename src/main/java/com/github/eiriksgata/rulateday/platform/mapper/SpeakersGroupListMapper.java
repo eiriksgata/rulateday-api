@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 /**
  * author: create by Keith
  * version: v1.0
- * description: indi.eiriksgata.rulateday.mapper
+ * description: com.github.eiriksgata.rulateday.mapper
  * date: 2020/11/13
  **/
 

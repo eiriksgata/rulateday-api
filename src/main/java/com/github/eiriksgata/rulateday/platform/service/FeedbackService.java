@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * author: create by Keith
  * version: v1.0
- * description: indi.eiriksgata.rulatedayapi.service
+ * description: com.github.eiriksgata.rulatedayapi.service
  * date: 2021/5/20
  **/
 public interface FeedbackService {

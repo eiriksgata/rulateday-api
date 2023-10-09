@@ -2,12 +2,11 @@ package com.github.eiriksgata.rulateday.platform;
 
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.LineCaptcha;
-import indi.eiriksgata.dice.operation.impl.RollBasicsImpl;
+import com.github.eiriksgata.trpg.dice.operation.impl.RollBasicsImpl;
 import com.github.eiriksgata.rulateday.platform.utils.RestUtil;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.io.File;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;

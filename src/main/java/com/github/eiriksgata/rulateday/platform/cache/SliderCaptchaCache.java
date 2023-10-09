@@ -1,10 +1,8 @@
 package com.github.eiriksgata.rulateday.platform.cache;
 
 import com.github.eiriksgata.rulateday.platform.entity.TemplateCutResult;
-import indi.eiriksgata.cache.Cache;
+import com.github.eiriksgata.cache.Cache;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 @Component
 public class SliderCaptchaCache {
