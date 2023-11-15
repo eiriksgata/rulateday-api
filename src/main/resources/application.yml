@@ -21,10 +21,6 @@ spring:
   profiles:
     active: config
     swagger: true
-    authorization:
-      username: root
-      password: admin&admin
-      enable: true
     cores: false
 
   main:

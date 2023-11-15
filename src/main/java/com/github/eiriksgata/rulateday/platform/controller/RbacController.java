@@ -7,12 +7,15 @@ import com.github.eiriksgata.rulateday.platform.service.rbac.PermissionService;
 import com.github.eiriksgata.rulateday.platform.service.rbac.RoleService;
 import com.github.eiriksgata.rulateday.platform.service.rbac.UserService;
 import com.github.eiriksgata.rulateday.platform.vo.ResponseBean;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Api(tags = "RBAC")
+@RequestMapping("")
 public class RbacController {
 
     @Autowired

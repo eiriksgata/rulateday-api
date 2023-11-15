@@ -74,9 +74,9 @@ public class JwtProvider {
      * @param token      客户端传入的token
      * @param userDetail 从数据库中查询出来的用户信息
      */
-    public boolean validateToken(String token, UserDetail userDetail) {
+    public boolean validateToken(String token, String username) {
         Claims claims = getClaimsFromToken(token);
-        return claims.getSubject().equals(userDetail.getUsername()) && !isTokenExpired(claims);
+        return claims.getSubject().equals(username) && !isTokenExpired(claims);
     }
 
     /**
@@ -97,7 +97,7 @@ public class JwtProvider {
     private Claims getClaimsFromToken(String token) {
         Claims claims = null;
         try {
-            Jwts.parserBuilder()
+            claims = (Claims) Jwts.parserBuilder()
                     .setSigningKey(Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8)))
                     .build()
                     .parse(token)

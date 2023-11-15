@@ -6,6 +6,7 @@ import com.github.eiriksgata.rulateday.platform.constant.CacheNameEnum;
 import com.github.eiriksgata.rulateday.platform.entity.UserDetail;
 import com.github.eiriksgata.rulateday.platform.jwt.JwtProperties;
 import com.github.eiriksgata.rulateday.platform.provider.JwtProvider;
+import com.github.eiriksgata.rulateday.platform.service.impl.CustomUserDetailsService;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +33,13 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Autowired
     Cache caffeineCache;
 
+    @Autowired
+    CustomUserDetailsService customUserDetailsService;
+
     @Override
-    protected void doFilterInternal( HttpServletRequest request,
-                                     HttpServletResponse response,
-                                     FilterChain chain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain chain) throws ServletException, IOException {
 
         // 拿到Authorization请求头内的信息
         String authToken = jwtProvider.getToken(request);
@@ -51,9 +55,12 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             if (StrUtil.isNotEmpty(loginAccount) && SecurityContextHolder.getContext().getAuthentication() == null) {
                 // 查询用户
                 UserDetail userDetails = caffeineCache.get(CacheNameEnum.USER, loginAccount, UserDetail.class);
+                if (userDetails == null) {
+                    userDetails = customUserDetailsService.loadUserByUsername(loginAccount);
+                }
 
                 // 拿到用户信息后验证用户信息与token
-                if (userDetails != null && jwtProvider.validateToken(authToken, userDetails)) {
+                if (userDetails != null && jwtProvider.validateToken(authToken, userDetails.getUsername())) {
 
                     // 组装authentication对象，构造参数是Principal Credentials 与 Authorities
                     // 后面的拦截器里面会用到 grantedAuthorities 方法
@@ -64,9 +71,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
                     // 将authentication信息放入到上下文对象中
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                    log.info("JWT过滤器通过校验请求头token自动登录成功, user : {}", userDetails.getUsername());
                 }
+
+
             }
         }
         chain.doFilter(request, response);

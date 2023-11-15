@@ -14,6 +14,7 @@ import com.github.eiriksgata.rulateday.platform.pojo.RobotToken;
 import com.github.eiriksgata.rulateday.platform.utils.VerifyImageUtil;
 import com.github.eiriksgata.rulateday.platform.vo.AccessToken;
 import com.github.eiriksgata.rulateday.platform.vo.ResponseBean;
+import com.github.eiriksgata.rulateday.platform.vo.SliderCaptchaVerifyVo;
 import com.github.eiriksgata.rulateday.platform.vo.openapi.GenCaptchaVo;
 import io.swagger.annotations.Api;
 import org.jetbrains.annotations.NotNull;
@@ -44,11 +45,18 @@ public class AuthController {
     @Autowired
     JwtProvider jwtProvider;
 
-    @PutMapping("/authentication")
+    @PutMapping("/authentication/captcha/slider")
     @IgnoreAuthentication
-    public ResponseBean<AccessToken> authentication(@NotNull HttpServletRequest httpServletRequest, @NotNull HttpServletResponse response) {
+    public ResponseBean<AccessToken> authenticationBySliderCaptcha(@NotNull HttpServletRequest httpServletRequest, @NotNull HttpServletResponse response) {
         String authorization = httpServletRequest.getHeader("Secret");
-        return ResponseBean.success(authService.loginVerification(authorization));
+        return ResponseBean.success(authService.loginVerificationBySliderVerify(authorization));
+    }
+
+    @PutMapping("/authentication/captcha/code")
+    @IgnoreAuthentication
+    public ResponseBean<AccessToken> authenticationByCaptchaCode(@NotNull HttpServletRequest httpServletRequest, @NotNull HttpServletResponse response) {
+        String authorization = httpServletRequest.getHeader("Secret");
+        return ResponseBean.success(authService.loginVerificationByVerityCode(authorization));
     }
 
     @PostMapping("/refresh/token")
@@ -64,18 +72,30 @@ public class AuthController {
         return ResponseBean.success();
     }
 
-//    @GetMapping("/generate/captcha/{username}")
-//    @IgnoreAuthentication
-//    public ResponseBean<?> generateCaptcha(@PathVariable("username") String username) {
-//        //定义图形验证码的长和宽
-//        LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(
-//                200, 50);
-//        captchaCache.put(username, lineCaptcha.getCode());
-//        return ResponseBean.success(GenCaptchaVo.builder()
-//                .codeId(username)
-//                .pictureBase64(lineCaptcha.getImageBase64())
-//                .build());
-//    }
+    @GetMapping("/generate/captcha/{username}")
+    @IgnoreAuthentication
+    public ResponseBean<?> generateCaptcha(@PathVariable("username") String username) {
+        //定义图形验证码的长和宽
+        LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(
+                200, 50);
+        captchaCache.put(username, lineCaptcha.getCode());
+        return ResponseBean.success(GenCaptchaVo.builder()
+                .codeId(username)
+                .pictureBase64(lineCaptcha.getImageBase64())
+                .build());
+    }
+
+    @PostMapping("/slider/captcha/verify")
+    @IgnoreAuthentication
+    public ResponseBean<?> sliderCaptchaVerify(@RequestBody SliderCaptchaVerifyVo sliderCaptchaVerifyVo) {
+        if (sliderCaptchaCache.verify(
+                sliderCaptchaVerifyVo.getUsername(),
+                sliderCaptchaVerifyVo.getOffset()
+        )) {
+            return ResponseBean.success();
+        }
+        return ResponseBean.error(CommonBaseExceptionEnum.ACCOUNTS_CAPTCHA_CODE_ERROR);
+    }
 
     @GetMapping("/generate/slider/captcha/{username}")
     @IgnoreAuthentication
@@ -89,7 +109,9 @@ public class AuthController {
                     TemplateCutResult.builder()
                             .slider(result.getSlider())
                             .background(result.getBackground())
-                            .yHeight(result.getYHeight())
+                            .width(result.getWidth())
+                            .height(result.getHeight())
+                            .y(result.getY())
                             .build()
             );
         } catch (Exception e) {

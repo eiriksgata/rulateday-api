@@ -12,7 +12,6 @@ import java.io.File;
 import java.util.Random;
 
 
-
 @Slf4j
 public class VerifyImageUtil {
 
@@ -74,8 +73,10 @@ public class VerifyImageUtil {
         return TemplateCutResult.builder()
                 .slider(Base64Utils.encodeToString(newImagebyte))
                 .background(Base64Utils.encodeToString(oriImageByte))
-                .xWidth(widthRandom)
-                .yHeight(heightRandom)
+                .width(oriImageWidth)
+                .height(oriImageHeight)
+                .x(widthRandom)
+                .y(heightRandom)
                 .build();
     }
 

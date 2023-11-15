@@ -22,8 +22,8 @@ public class SliderCaptchaCache {
         if (templateCutResult == null) {
             return false;
         }
-        return xWidth > templateCutResult.getXWidth() - 10
-                && xWidth < templateCutResult.getXWidth() - 10;
+        return xWidth > templateCutResult.getX() - 10
+                && xWidth < templateCutResult.getX() + 10;
     }
 
 
