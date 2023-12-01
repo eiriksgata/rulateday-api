@@ -51,7 +51,7 @@ public enum CommonBaseExceptionEnum {
 
     UNKNOWN(-2, "Unknown Exception"),
 
-    UPLOAD(1, "Upload File Stored Error");
+    UPLOAD(7610, "Upload File Stored Error");
 
     private final Integer errCode;
     private final String errMsg;

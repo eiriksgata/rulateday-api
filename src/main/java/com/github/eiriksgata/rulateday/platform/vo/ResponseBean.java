@@ -60,7 +60,7 @@ public class ResponseBean<T> implements Serializable {
         return new ResponseBean<>(CommonBaseExceptionEnum.SUCCESS, message, data);
     }
 
-    public static ResponseBean<Object> error(Integer code, String message) {
+    public static ResponseBean<?> error(Integer code, String message) {
         return new ResponseBean<>(code, message);
     }
 

@@ -2,11 +2,14 @@ package com.github.eiriksgata.rulateday.platform;
 
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.LineCaptcha;
+import com.github.eiriksgata.rulateday.platform.utils.HexConvertUtil;
 import com.github.eiriksgata.trpg.dice.operation.impl.RollBasicsImpl;
 import com.github.eiriksgata.rulateday.platform.utils.RestUtil;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -130,6 +133,19 @@ public class CollectionTest {
         System.out.println(
                 stringBuilder
         );
+    }
+
+    @Test
+    public void byteHandler() {
+        byte[] data = {(byte) 0x97, 0x15};
+        byte[] result = new byte[2];
+
+        ByteBuffer buffer = ByteBuffer.wrap(data);
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+
+
+        System.out.println(HexConvertUtil.bytesToHex(buffer.array()));
+
     }
 
 
