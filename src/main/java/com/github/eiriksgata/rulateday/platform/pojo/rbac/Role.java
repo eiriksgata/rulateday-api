@@ -1,5 +1,7 @@
 package com.github.eiriksgata.rulateday.platform.pojo.rbac;
 
+import com.alibaba.fastjson.serializer.ToStringSerializer;
+import com.alibaba.fastjson2.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -17,6 +19,7 @@ public class Role {
      * 主键
      */
     @TableId(value = "id", type = IdType.AUTO)
+//    @JSONField(value = true, name = "id", serializeUsing = ToStringSerializer.class)
     private Long id;
 
     /**

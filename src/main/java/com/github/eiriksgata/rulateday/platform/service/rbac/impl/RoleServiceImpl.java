@@ -1,10 +1,12 @@
 package com.github.eiriksgata.rulateday.platform.service.rbac.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.eiriksgata.rulateday.platform.exception.CommonBaseException;
 import com.github.eiriksgata.rulateday.platform.mapper.RoleMapper;
 import com.github.eiriksgata.rulateday.platform.pojo.rbac.Role;
 import com.github.eiriksgata.rulateday.platform.service.rbac.RoleService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -47,6 +49,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         //TODO: 需要查询出角色绑定的用户 以及 角色绑定的权限 清除相关关系后才能删除。
 
 
+    }
+
+    @Transactional(rollbackFor = CommonBaseException.class)
+    @Override
+    public Role selectRolePermissionByRoleId(Long roleId) {
+        return baseMapper.selectRolePermissionByRoleId(roleId);
     }
 
 }

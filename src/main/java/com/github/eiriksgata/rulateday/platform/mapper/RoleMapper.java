@@ -1,15 +1,10 @@
 package com.github.eiriksgata.rulateday.platform.mapper;
 
-import com.alibaba.fastjson2.TypeReference;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.github.eiriksgata.rulateday.platform.pojo.rbac.Permission;
 import com.github.eiriksgata.rulateday.platform.pojo.rbac.Role;
-import com.github.eiriksgata.rulateday.platform.websocket.vo.AiTextDrawGenVo;
-import com.github.eiriksgata.rulateday.platform.websocket.vo.WsDataBean;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
-
 
 @Mapper
 public interface RoleMapper extends BaseMapper<Role> {
@@ -52,11 +47,11 @@ public interface RoleMapper extends BaseMapper<Role> {
             @Result(column = "created_at", property = "createdAt"),
             @Result(column = "updated_at", property = "updatedAt"),
             @Result(property = "permissions", column = "id", javaType = List.class,
-                    many = @Many(select = "com.github.eiriksgata.rulateday.platform.PermissionMapper.selectByRoleId")
+                    many = @Many(select = "com.github.eiriksgata.rulateday.platform.mapper.PermissionMapper.selectByRoleId")
             )
     })
     @Select("select * from t_rbac_role where id =#{roleId}")
-    List<Role> selectRolePermissionByRoleId(@Param("roleId") Long roleId);
+    Role selectRolePermissionByRoleId(@Param("roleId") Long roleId);
 
 
 

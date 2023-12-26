@@ -9,6 +9,7 @@ import com.github.eiriksgata.rulateday.platform.service.rbac.UserService;
 import com.github.eiriksgata.rulateday.platform.vo.ResponseBean;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,15 +28,10 @@ public class RbacController {
     @Autowired
     UserService userService;
 
-    @PostMapping("/role")
-    public ResponseBean<?> roleCreate(@RequestBody Role role) {
-        roleService.roleCreate(role);
-        return ResponseBean.success();
-    }
-
     @PutMapping("/role")
-    public ResponseBean<?> roleUpdate(@RequestBody Role role) {
-        roleService.roleUpdate(role);
+    public ResponseBean<?> roleSave(@RequestBody Role role) {
+        if (role.getId() == -1) role.setId(null);
+        roleService.saveOrUpdate(role);
         return ResponseBean.success();
     }
 
@@ -59,18 +55,13 @@ public class RbacController {
         return ResponseBean.success();
     }
 
-    @PostMapping("/permission")
-    public ResponseBean<?> permissionCreate(@RequestBody Permission permission) {
-        permission.setId(null);
-        permissionService.save(permission);
+    @PutMapping("/permission")
+    public ResponseBean<?> permissionSave(@RequestBody Permission permission) {
+        if (permission.getId() == -1) permission.setId(null);
+        permissionService.saveOrUpdate(permission);
         return ResponseBean.success();
     }
 
-    @PutMapping("/permission")
-    public ResponseBean<?> permissionUpdate(@RequestBody Permission permission) {
-        permissionService.updateById(permission);
-        return ResponseBean.success();
-    }
 
     @GetMapping("/permission/{id}")
     public ResponseBean<Permission> permissionQuery(@PathVariable("id") long permissionId) {
@@ -105,5 +96,11 @@ public class RbacController {
 
     }
 
+    @GetMapping("/role/permissions/{roleId}")
+    public ResponseBean<?> getRolePermissionsByRoleId(@Validated @PathVariable("roleId") Long roleId) {
+        return ResponseBean.success(
+                roleService.selectRolePermissionByRoleId(roleId)
+        );
+    }
 
 }
