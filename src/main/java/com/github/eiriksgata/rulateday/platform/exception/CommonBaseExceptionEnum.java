@@ -5,9 +5,12 @@ import lombok.Getter;
 @Getter
 public enum CommonBaseExceptionEnum {
 
-    //login
     ACCOUNTS_AUTHENTICATION_ERROR(10801, "账号密码错误"),
 
+    ACCOUNTS_USERNAME_LENGTH_ERROR(11310, "账号名过短"),
+
+    ACCOUNTS_USERNAME_EXIST_ERROR(11311, "账号已存在"),
+    ACCOUNTS_USERNAME_NOT_EXIST_ERROR(11312, "账号不存在"),
     ACCOUNTS_CAPTCHA_CODE_ERROR(10802, "验证码不正确"),
 
     TOKEN_NOT_EXIST_ERR(10002, "凭证验证无法通过，请重新登陆"),

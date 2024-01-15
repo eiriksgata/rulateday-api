@@ -11,20 +11,23 @@ import com.github.eiriksgata.rulateday.platform.constant.CacheNameEnum;
 import com.github.eiriksgata.rulateday.platform.entity.UserDetail;
 import com.github.eiriksgata.rulateday.platform.exception.CommonBaseException;
 import com.github.eiriksgata.rulateday.platform.exception.CommonBaseExceptionEnum;
+import com.github.eiriksgata.rulateday.platform.pojo.rbac.User;
 import com.github.eiriksgata.rulateday.platform.provider.JwtProvider;
 import com.github.eiriksgata.rulateday.platform.service.AuthService;
+import com.github.eiriksgata.rulateday.platform.service.rbac.UserService;
 import com.github.eiriksgata.rulateday.platform.utils.HexConvertUtil;
-import com.github.eiriksgata.rulateday.platform.vo.AccessToken;
-import com.github.eiriksgata.rulateday.platform.vo.Captcha;
-import com.github.eiriksgata.rulateday.platform.vo.LoginVo;
-import com.github.eiriksgata.rulateday.platform.vo.SliderCaptcha;
+import com.github.eiriksgata.rulateday.platform.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 @Service
 @Slf4j
@@ -48,6 +51,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Autowired
     SliderCaptchaCache sliderCaptchaCache;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    UserService userService;
+
 
     @Override
     public AccessToken loginVerificationByVerityCode(@NotNull String cryptoData) {
@@ -115,6 +125,26 @@ public class AuthServiceImpl implements AuthService {
         return accessToken;
     }
 
+    @Transactional(rollbackFor = CommonBaseException.class)
+    @Override
+    public void userPasswordReset(UserPasswordResetVo userPasswordResetVo) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        //获取用户信息
+        UserDetail userDetail = (UserDetail) authentication.getPrincipal();
+        if (passwordEncoder.matches(userPasswordResetVo.getOldPassword(), userDetail.getPassword())) {
+            //TODO: 更改密码
+            User user = userService.selectByUsername(userDetail.getUsername());
+            user.setPassword(passwordEncoder.encode(userPasswordResetVo.getNewPassword()));
+            user.setUpdatedAt(new Date());
+            userService.updateById(user);
+            logout();
+        } else {
+            throw new CommonBaseException(CommonBaseExceptionEnum.ACCOUNTS_AUTHENTICATION_ERROR);
+        }
+    }
+
+    @Override
     public void logout() {
         caffeineCache.remove(CacheNameEnum.USER, ((UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
         SecurityContextHolder.clearContext();

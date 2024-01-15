@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@Api(tags = "事件驱动控制器")
+@Api(tags = "9宫幻卡模拟器节点控制器")
 @RequestMapping("/api/v1")
 public class TrpgEventController {
 

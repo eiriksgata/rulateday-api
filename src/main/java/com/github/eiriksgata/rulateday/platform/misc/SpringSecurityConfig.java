@@ -3,6 +3,7 @@ package com.github.eiriksgata.rulateday.platform.misc;
 import com.github.eiriksgata.rulateday.platform.provider.CustomAuthenticationProvider;
 import com.github.eiriksgata.rulateday.platform.service.impl.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,7 +17,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -48,14 +48,19 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     RequestMappingHandlerMapping requestMappingHandlerMapping;
 
+    @Value("${control-platform.security.antMatchers}")
+    String securityAntMatchers;
+
     @Override
-    public void configure(WebSecurity web) throws Exception {
-        WebSecurity and = web.ignoring().and();
+    public void configure(WebSecurity web) {
+
+        WebSecurity and = web.ignoring().antMatchers(securityAntMatchers.split(",")).and();
         Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
         handlerMethods.forEach((info, method) -> {
             // 带IgnoreAuth注解的方法直接放行
             if (method.getMethodAnnotation(IgnoreAuthentication.class) != null) {
                 // 根据请求类型做不同的处理
+                assert info.getPatternsCondition() != null;
                 info.getMethodsCondition().getMethods().forEach(requestMethod -> {
                     switch (requestMethod) {
                         case GET:
@@ -92,14 +97,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // 正常配置其他安全相关的内容
         http.authorizeRequests()
-                // 放行所有OPTIONS请求
 
-                //文档
-                .antMatchers("/doc.html").permitAll()
-                .antMatchers("/webjars/**").permitAll()
-                .antMatchers("/swagger-resources").permitAll()
-                .antMatchers("/resources/**").permitAll()
-                .antMatchers("/v2/**").permitAll()
                 // 其他请求都需要认证后才能访问
                 .anyRequest().authenticated()
                 // 使用自定义的 accessDecisionManager

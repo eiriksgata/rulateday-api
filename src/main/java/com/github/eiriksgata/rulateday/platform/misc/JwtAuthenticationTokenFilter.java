@@ -8,7 +8,6 @@ import com.github.eiriksgata.rulateday.platform.jwt.JwtProperties;
 import com.github.eiriksgata.rulateday.platform.provider.JwtProvider;
 import com.github.eiriksgata.rulateday.platform.service.impl.CustomUserDetailsService;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,7 +18,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Objects;
 
 @Slf4j
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
@@ -57,6 +55,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 UserDetail userDetails = caffeineCache.get(CacheNameEnum.USER, loginAccount, UserDetail.class);
                 if (userDetails == null) {
                     userDetails = customUserDetailsService.loadUserByUsername(loginAccount);
+                    //保存登陆账号信息
+                    caffeineCache.put(CacheNameEnum.USER, loginAccount, userDetails);
                 }
 
                 // 拿到用户信息后验证用户信息与token

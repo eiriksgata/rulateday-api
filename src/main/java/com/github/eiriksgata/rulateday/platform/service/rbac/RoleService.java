@@ -24,4 +24,7 @@ public interface RoleService extends IService<Role> {
 
     @Transactional(rollbackFor = CommonBaseException.class)
     Role selectRolePermissionByRoleId(Long roleId);
+
+    @Transactional(rollbackFor = CommonBaseException.class)
+    void rolePermissionRelSave(Long roleId, List<Long> permissions);
 }

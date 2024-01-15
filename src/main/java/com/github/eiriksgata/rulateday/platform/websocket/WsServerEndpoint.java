@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 @Component
-@ServerEndpoint(value = "/push-channel", configurator = GetHttpSessionConfigurator.class)
+@ServerEndpoint(value = "/ws/open-shamrock", configurator = GetHttpSessionConfigurator.class)
 @Slf4j
 public class WsServerEndpoint {
 
@@ -30,10 +30,10 @@ public class WsServerEndpoint {
      */
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
-        session.setMaxIdleTimeout(1000 * 60);
-        userId = (String) config.getUserProperties().get("userId");
-        channelList.put(userId, this);
-        this.session = session;
+        
+
+
+
         log.info("device link :" + userId + ";device list size:" + channelList.size());
     }
 

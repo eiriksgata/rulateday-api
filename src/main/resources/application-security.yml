@@ -1,0 +1,3 @@
+control-platform:
+  security:
+    antMatchers: /webjars/**,/doc.html,/swagger-resources,/resources/**,/v2/**

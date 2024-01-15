@@ -1,11 +1,11 @@
 package com.github.eiriksgata.rulateday.platform.misc;
 
+import cn.hutool.core.text.AntPathMatcher;
 import com.github.eiriksgata.rulateday.platform.cache.Cache;
 import com.github.eiriksgata.rulateday.platform.constant.CacheNameEnum;
 import com.github.eiriksgata.rulateday.platform.entity.UserDetail;
 import com.github.eiriksgata.rulateday.platform.pojo.rbac.Permission;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
@@ -15,6 +15,7 @@ import org.springframework.security.web.FilterInvocation;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 public class AccessDecisionProcessor implements AccessDecisionVoter<FilterInvocation> {
@@ -30,12 +31,18 @@ public class AccessDecisionProcessor implements AccessDecisionVoter<FilterInvoca
         // 拿到当前请求uri
         String requestUrl = object.getRequestUrl();
         String method = object.getRequest().getMethod();
-        //log.info("进入自定义鉴权投票器，URI : {} {}", method, requestUrl);
-
-        String key = method + ":" + requestUrl;
+//      log.info("进入自定义鉴权投票器，URI : {} {}", method, requestUrl);
+        String permissionName = method + ":" + requestUrl;
         // 如果没有缓存中没有此权限也就是未保护此API，弃权
-        Permission permission = caffeineCache.get(CacheNameEnum.PERMISSIONS, key, Permission.class);
-        if (permission == null) {
+//        Permission permission = caffeineCache.get(CacheNameEnum.PERMISSIONS, permissionName, Permission.class);
+//        if (permission == null) {
+//            log.info("访问弃权");
+//            return ACCESS_ABSTAIN;
+//        }
+
+        //检测是否是超级管理员账号，如果是则弃权
+        String username = ((UserDetail) authentication.getPrincipal()).getUser().getName();
+        if (Objects.equals(username, "admin")) {
             return ACCESS_ABSTAIN;
         }
 
@@ -45,12 +52,18 @@ public class AccessDecisionProcessor implements AccessDecisionVoter<FilterInvoca
         for (String role : roles) {
             Map<String, Permission> rolePermissionMap = caffeineCache.get(
                     CacheNameEnum.ROLES_PERMISSIONS, role, Map.class);
-            Permission tempPermission = rolePermissionMap.get(key);
+            Permission tempPermission = rolePermissionMap.get(permissionName);
+            AntPathMatcher antPathMatcher = new AntPathMatcher();
             if (tempPermission == null) {
-                return ACCESS_DENIED;
+                if (rolePermissionMap.keySet().stream().anyMatch(
+                        (name) -> antPathMatcher.match(name, permissionName))) return ACCESS_GRANTED;
+            } else {
+                return ACCESS_GRANTED;
             }
         }
-        return ACCESS_GRANTED;
+
+        log.info("拒绝访问");
+        return ACCESS_DENIED;
     }
 
     @Override

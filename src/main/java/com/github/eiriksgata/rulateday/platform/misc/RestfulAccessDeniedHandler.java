@@ -1,13 +1,10 @@
 package com.github.eiriksgata.rulateday.platform.misc;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.eiriksgata.rulateday.platform.cache.Cache;
 import com.github.eiriksgata.rulateday.platform.exception.CommonBaseExceptionEnum;
 import com.github.eiriksgata.rulateday.platform.vo.ResponseBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
