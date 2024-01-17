@@ -17,7 +17,12 @@ public enum CommonBaseExceptionEnum {
 
 
     TOKEN_NOT_ACCESS_ERR(120001, "无访问权限"),
+
+    WS_RESPONSE_TIMEOUT_ERROR(130001, "websocket 同步返回消息超时"),
+
+
     //Game event enum
+
     GAME_EVENT_NODE_DELETE_ERROR(10230, "删除节点失败，因为目前节点有下属节点，请先删除下属节点后再删除本节点"),
 
     DICE_EXCEPTION_COMMIT_ERROR(10010, "骰子异常数据提交失败"),

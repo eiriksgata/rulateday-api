@@ -9,6 +9,7 @@ import com.github.eiriksgata.rulateday.platform.exception.CommonBaseExceptionEnu
 import com.github.eiriksgata.rulateday.platform.misc.IgnoreAuthentication;
 import com.github.eiriksgata.rulateday.platform.provider.JwtProvider;
 import com.github.eiriksgata.rulateday.platform.service.AuthService;
+import com.github.eiriksgata.rulateday.platform.service.RobotService;
 import com.github.eiriksgata.rulateday.platform.utils.VerifyImageUtil;
 import com.github.eiriksgata.rulateday.platform.vo.AccessToken;
 import com.github.eiriksgata.rulateday.platform.vo.ResponseBean;
@@ -40,6 +41,9 @@ public class AuthController {
 
     @Autowired
     JwtProvider jwtProvider;
+
+    @Autowired
+    RobotService robotService;
 
     @PutMapping("/authentication/captcha/slider")
     @IgnoreAuthentication

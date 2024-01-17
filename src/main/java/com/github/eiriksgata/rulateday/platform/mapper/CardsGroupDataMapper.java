@@ -23,14 +23,14 @@ public interface CardsGroupDataMapper {
     @Delete("delete from cards_group_data where id = #{id}")
     void deleteById(@Param("id") Long id);
 
-    @Delete("delete from cards_group_data where group_id = #{groupId}")
-    void clearByGroupId(@Param("groupId") Long groupId);
+    @Delete("delete from cards_group_data where group_id = #{groupId} and group_type = #{groupType}")
+    void clearByGroupId(@Param("groupId") Long groupId, @Param("groupType") Integer groupType);
 
     @Select("select * from cards_group_data where group_id =#{groupId} ORDER BY RANDOM() LIMIT 1")
-    CardsGroupData randomGetCard(@Param("groupId") Long groupId);
+    CardsGroupData randomGetCard(@Param("groupId") Long groupId, @Param("groupType") Integer groupType);
 
-    @Select("select * from cards_group_data where group_id = #{groupId}")
-    List<CardsGroupData> getGroupCardsList(@Param("groupId") Long groupId);
+    @Select("select * from cards_group_data where group_id = #{groupId} and group_type = #{groupType}")
+    List<CardsGroupData> getGroupCardsList(@Param("groupId") Long groupId, @Param("groupType") Integer groupType);
 
-    
+
 }

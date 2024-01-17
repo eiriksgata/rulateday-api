@@ -149,4 +149,10 @@ public class CollectionTest {
     }
 
 
+    public void testMessageContent() {
+
+
+
+
+    }
 }
