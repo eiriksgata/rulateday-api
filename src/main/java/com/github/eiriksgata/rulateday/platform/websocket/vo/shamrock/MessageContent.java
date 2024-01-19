@@ -35,4 +35,10 @@ public class MessageContent {
         return this;
     }
 
+    public MessageContent setTypeByImages(String url) {
+        this.type = "image";
+        data.put("url", url);
+        return this;
+    }
+
 }

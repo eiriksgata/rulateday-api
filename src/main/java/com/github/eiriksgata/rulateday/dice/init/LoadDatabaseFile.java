@@ -110,7 +110,6 @@ public class LoadDatabaseFile {
         createCustomDoc();
         String path = "data/com.github.eiriksgata.rulateday-dice/custom-doc";
         log.info("-----------Rulateday-dice doc files loading-----------");
-        //TODO: 扫描目录的json文档文件
         File folder = new File(path);
         File[] files = folder.listFiles();
         if (files != null) {

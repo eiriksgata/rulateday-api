@@ -2,7 +2,7 @@ package com.github.eiriksgata.rulateday.dice.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.github.eiriksgata.rulateday.utlis.RestUtil;
+import com.github.eiriksgata.rulateday.platform.utils.RestUtil;
 
 public class OtherApiService {
 

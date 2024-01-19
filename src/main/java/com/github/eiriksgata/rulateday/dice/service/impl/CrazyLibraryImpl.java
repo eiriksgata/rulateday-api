@@ -1,12 +1,13 @@
 package com.github.eiriksgata.rulateday.dice.service.impl;
 
-import com.github.eiriksgata.rulateday.mapper.CrazyDescribeMapper;
-import com.github.eiriksgata.rulateday.mapper.CrazyOverDescribeMapper;
-import com.github.eiriksgata.rulateday.pojo.CrazyDescribe;
-import com.github.eiriksgata.rulateday.pojo.CrazyOverDescribe;
-import com.github.eiriksgata.rulateday.service.CrazyLibraryService;
-import com.github.eiriksgata.rulateday.utlis.MyBatisUtil;
+import com.github.eiriksgata.rulateday.dice.service.CrazyLibraryService;
+import com.github.eiriksgata.rulateday.platform.mapper.CrazyDescribeMapper;
+import com.github.eiriksgata.rulateday.platform.mapper.CrazyOverDescribeMapper;
+import com.github.eiriksgata.rulateday.platform.pojo.CrazyDescribe;
+import com.github.eiriksgata.rulateday.platform.pojo.CrazyOverDescribe;
 import org.apache.commons.lang3.RandomUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -16,10 +17,16 @@ import java.util.List;
  * description: com.github.eiriksgata.rulateday.service.impl
  * date: 2020/11/4
  **/
+@Service
 public class CrazyLibraryImpl implements CrazyLibraryService {
 
-    private static final CrazyDescribeMapper crazyMapper = MyBatisUtil.getSqlSession().getMapper(CrazyDescribeMapper.class);
-    private static final CrazyOverDescribeMapper overMapper = MyBatisUtil.getSqlSession().getMapper(CrazyOverDescribeMapper.class);
+    @Autowired
+    CrazyDescribeMapper crazyMapper;
+
+
+    @Autowired
+    CrazyOverDescribeMapper overMapper;
+
 
     @Override
     public String getRandomCrazyDescribe() {

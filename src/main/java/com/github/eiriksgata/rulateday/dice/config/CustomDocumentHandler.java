@@ -1,6 +1,7 @@
 package com.github.eiriksgata.rulateday.dice.config;
 
-import com.github.eiriksgata.rulateday.pojo.QueryDataBase;
+
+import com.github.eiriksgata.rulateday.platform.pojo.QueryDataBase;
 
 import java.util.ArrayList;
 import java.util.HashMap;

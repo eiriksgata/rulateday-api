@@ -118,6 +118,7 @@ public class BotController {
         if (data.getSanderId() == Long.parseLong(number)) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(CustomText.getText("bot.group.list.title")).append("\n");
+
             //TODO: 获取群列表
 //            for (Group group : Bot.getInstances().get(0).getGroups()) {
 //                stringBuilder.append("[").append(group.getName()).append("]").append(" ").append(group.getId()).append("\n");

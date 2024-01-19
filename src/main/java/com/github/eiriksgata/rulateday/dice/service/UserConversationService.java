@@ -1,6 +1,9 @@
 package com.github.eiriksgata.rulateday.dice.service;
 
-import com.github.eiriksgata.rulateday.pojo.QueryDataBase;
+
+
+import com.github.eiriksgata.rulateday.dice.dto.DiceMessageDTO;
+import com.github.eiriksgata.rulateday.platform.pojo.QueryDataBase;
 
 import java.util.List;
 
@@ -12,4 +15,6 @@ import java.util.List;
  **/
 public interface UserConversationService {
     void saveConversation(Long qq, List<QueryDataBase> queryData);
+
+    String checkInputQuery(DiceMessageDTO data);
 }

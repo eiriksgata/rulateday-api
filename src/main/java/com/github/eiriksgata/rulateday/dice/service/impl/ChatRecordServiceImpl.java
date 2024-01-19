@@ -1,15 +1,14 @@
 package com.github.eiriksgata.rulateday.dice.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.eiriksgata.rulateday.config.GlobalData;
-import com.github.eiriksgata.rulateday.dto.ChatRecordDTO;
-import com.github.eiriksgata.rulateday.service.ChatRecordService;
+import com.github.eiriksgata.rulateday.dice.config.GlobalData;
+import com.github.eiriksgata.rulateday.dice.dto.ChatRecordDTO;
+import com.github.eiriksgata.rulateday.dice.dto.DiceMessageDTO;
+import com.github.eiriksgata.rulateday.dice.service.ChatRecordService;
+import com.github.eiriksgata.rulateday.platform.websocket.api.ShamrockService;
 import com.github.eiriksgata.trpg.dice.reply.CustomText;
-import net.mamoe.mirai.Bot;
-import net.mamoe.mirai.contact.NormalMember;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
-import net.mamoe.mirai.event.events.GroupMessagePostSendEvent;
-import net.mamoe.mirai.utils.ExternalResource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,59 +16,67 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
-
+@Service
 public class ChatRecordServiceImpl implements ChatRecordService {
 
+    @Autowired
+    ShamrockService shamrockService;
+
     @Override
-    public void groupRecordHandler(GroupMessageEvent groupMessageEvent) {
-        Long startTime = GlobalData.groupChatRecordEnableMap.get(groupMessageEvent.getGroup().getId() + "");
+    public void groupRecordHandler(DiceMessageDTO data) {
+        Long startTime = GlobalData.groupChatRecordEnableMap.get(data.getWsRequestBean().getParams().getGroup_id() + "");
         if (startTime != null) {
             if (System.currentTimeMillis() - startTime > 1000 * 60 * 60 * 5) {
-                groupMessageEvent.getGroup().sendMessage(CustomText.getText("chat.record.cache.timeout"));
-                GlobalData.groupChatRecordEnableMap.remove(groupMessageEvent.getGroup().getId() + "");
-                recordFileUpload(groupMessageEvent);
+                shamrockService.sendGroupMessage(
+                        data.getSanderId(),
+                        data.getWsRequestBean().getParams().getGroup_id(),
+                        CustomText.getText("chat.record.cache.timeout")
+                );
+
+                String filename = recordFileUpload(data.getWsRequestBean().getParams().getGroup_id());
+                String resultText = CustomText.getText("chat.record.close") + "\n" +
+                        "http://localhost:12030/server/resources/chat/record/" + filename;
+                shamrockService.sendGroupMessage(data.getSanderId(), data.getWsRequestBean().getParams().getGroup_id(), resultText);
+                GlobalData.groupChatRecordEnableMap.remove(data.getWsRequestBean().getParams().getGroup_id() + "");
+                GlobalData.groupChatRecordDataMap.remove(data.getWsRequestBean().getParams().getGroup_id() + "");
+
             } else {
                 ChatRecordDTO chatRecordDTO = new ChatRecordDTO();
-                chatRecordDTO.setSenderId(groupMessageEvent.getSender().getId());
-                String senderName = groupMessageEvent.getSender().getNameCard();
-                if (senderName.equals("")) {
-                    senderName = groupMessageEvent.getSender().getNick();
-                }
+                chatRecordDTO.setSenderId(chatRecordDTO.getSenderId());
+                String senderName = data.getWsRequestBean().getParams().getSender().getCard();
 
                 chatRecordDTO.setSenderName(senderName);
                 chatRecordDTO.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-                chatRecordDTO.setContent(groupMessageEvent.getMessage().contentToString());
-                GlobalData.groupChatRecordDataMap.get(groupMessageEvent.getGroup().getId() + "").getRecords().add(chatRecordDTO);
+                chatRecordDTO.setContent(data.getWsRequestBean().getParams().getMessage().toString());
+                GlobalData.groupChatRecordDataMap.get(data.getWsRequestBean().getParams().getGroup_id() + "")
+                        .getRecords().add(chatRecordDTO);
             }
         }
     }
 
     @Override
-    public void botSelfMessageRecord(GroupMessagePostSendEvent groupMessagePostSendEvent) {
-        long groupId = groupMessagePostSendEvent.component1().getId();
+    public void botSelfMessageRecord(DiceMessageDTO data) {
+        long groupId = data.getWsRequestBean().getParams().getGroup_id();
         Long startTime = GlobalData.groupChatRecordEnableMap.get(groupId + "");
         if (startTime != null) {
             ChatRecordDTO chatRecordDTO = new ChatRecordDTO();
-            long botId = Bot.getInstances().get(0).getId();
-            chatRecordDTO.setSenderId(botId);
+            chatRecordDTO.setSenderId(data.getSanderId());
 
-            NormalMember normalMember = Objects.requireNonNull(Objects.requireNonNull(Bot.getInstances().get(0).getGroup(groupId)).get(botId));
-
-            String senderName = normalMember.getNameCard();
+            String senderName = data.getWsRequestBean().getParams().getSender().getCard();
             if (senderName.equals("")) {
-                senderName = normalMember.getNick();
+                senderName = data.getWsRequestBean().getParams().getSender().getNickname();
             }
 
             chatRecordDTO.setSenderName(senderName);
             chatRecordDTO.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-            chatRecordDTO.setContent(groupMessagePostSendEvent.getMessage().contentToString());
+            chatRecordDTO.setContent(data.getWsRequestBean().getParams().getMessage().toString());
             GlobalData.groupChatRecordDataMap.get(groupId + "").getRecords().add(chatRecordDTO);
         }
     }
 
     public File recordsFileCreate(String text) throws IOException {
         String fileName = "group-record-" + System.currentTimeMillis() + ".json";
-        String path = "data/com.github.eiriksgata.rulateday-dice/" + fileName;
+        String path = "resources/chat/record" + fileName;
         File file = new File(path);
         file.createNewFile();
         CustomText.fileOut(file, text);
@@ -77,20 +84,13 @@ public class ChatRecordServiceImpl implements ChatRecordService {
     }
 
     @Override
-    public void recordFileUpload(GroupMessageEvent groupMessageEvent) {
+    public String recordFileUpload(Long id) {
         try {
-            File file = recordsFileCreate(JSONObject.toJSONString(GlobalData.groupChatRecordDataMap.get(groupMessageEvent.getGroup().getId() + "")));
-            ExternalResource resource = ExternalResource.create(file);
-            groupMessageEvent.getGroup().getFiles().uploadNewFile("/" + file.getName(), resource);
-            resource.close();
-            file.delete();
-            groupMessageEvent.getGroup().sendMessage(
-                    CustomText.getText("record.file.upload.success.result")
-            );
+            File file = recordsFileCreate(JSONObject.toJSONString(
+                    GlobalData.groupChatRecordDataMap.get(id + "")));
+            return file.getName();
         } catch (IOException e) {
-            groupMessageEvent.getGroup().sendMessage(
-                    CustomText.getText("record.file.upload.fail.result")
-            );
+            return null;
         }
     }
 

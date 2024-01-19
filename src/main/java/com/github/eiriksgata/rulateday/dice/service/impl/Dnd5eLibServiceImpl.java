@@ -1,17 +1,16 @@
 package com.github.eiriksgata.rulateday.dice.service.impl;
 
-import com.github.eiriksgata.rulateday.RulatedayCore;
-import com.github.eiriksgata.rulateday.event.EventAdapter;
-import com.github.eiriksgata.rulateday.event.EventUtils;
-import com.github.eiriksgata.rulateday.mapper.Dnd5ePhbDataMapper;
-import com.github.eiriksgata.rulateday.pojo.QueryDataBase;
-import com.github.eiriksgata.rulateday.service.Dnd5eLibService;
-import com.github.eiriksgata.rulateday.utlis.FileUtil;
-import com.github.eiriksgata.rulateday.utlis.MyBatisUtil;
-import net.mamoe.mirai.event.events.FriendMessageEvent;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
-import net.mamoe.mirai.event.events.GroupTempMessageEvent;
-import net.mamoe.mirai.utils.ExternalResource;
+import com.github.eiriksgata.rulateday.dice.dto.DiceMessageDTO;
+import com.github.eiriksgata.rulateday.dice.service.Dnd5eLibService;
+import com.github.eiriksgata.rulateday.platform.mapper.Dnd5ePhbDataMapper;
+import com.github.eiriksgata.rulateday.platform.pojo.QueryDataBase;
+import com.github.eiriksgata.rulateday.platform.utils.FileUtil;
+import com.github.eiriksgata.rulateday.platform.websocket.api.ShamrockService;
+import com.github.eiriksgata.rulateday.platform.websocket.vo.shamrock.EventEnum;
+import com.github.eiriksgata.rulateday.platform.websocket.vo.shamrock.MessageContent;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.net.URLEncoder;
@@ -26,98 +25,73 @@ import java.util.ResourceBundle;
  * description: com.github.eiriksgata.rulateday.service.impl
  * date: 2020/11/13
  **/
+@Slf4j
+@Service
 public class Dnd5eLibServiceImpl implements Dnd5eLibService {
 
     private final String imagesUrl = ResourceBundle.getBundle("resources").getString("resources.mm.images.url");
-    private final String localPath = RulatedayCore.INSTANCE.getDataFolderPath() + ResourceBundle.getBundle("resources").getString("resources.mm.images.path");
+    private final String localPath = ResourceBundle.getBundle("resources").getString("resources.mm.images.path");
 
+    @Autowired
+    ShamrockService shamrockService;
+
+    @Autowired
+    Dnd5ePhbDataMapper dnd5ePhbDataMapper;
 
     @Override
     public List<QueryDataBase> findName(String name) {
         List<QueryDataBase> result = new ArrayList<>();
-        Dnd5ePhbDataMapper mapper = MyBatisUtil.getSqlSession().getMapper(Dnd5ePhbDataMapper.class);
-        result.addAll(mapper.selectSkillPhb(name));
-        result.addAll(mapper.selectArmorWeapon(name));
-        result.addAll(mapper.selectClasses(name));
-        result.addAll(mapper.selectFeat(name));
-        result.addAll(mapper.selectRaces(name));
-        result.addAll(mapper.selectRule(name));
-        result.addAll(mapper.selectTools(name));
-        result.addAll(mapper.selectSpellList(name));
-        result.addAll(mapper.selectMagicItemsDmg(name));
-        result.addAll(mapper.selectRuleDmg(name));
-        result.addAll(mapper.selectMM(name));
-        result.addAll(mapper.selectBackgroundPhb(name));
-        result.addAll(mapper.selectEgtw(name));
-        result.addAll(mapper.selectBaseModule(name));
+        result.addAll(dnd5ePhbDataMapper.selectSkillPhb(name));
+        result.addAll(dnd5ePhbDataMapper.selectArmorWeapon(name));
+        result.addAll(dnd5ePhbDataMapper.selectClasses(name));
+        result.addAll(dnd5ePhbDataMapper.selectFeat(name));
+        result.addAll(dnd5ePhbDataMapper.selectRaces(name));
+        result.addAll(dnd5ePhbDataMapper.selectRule(name));
+        result.addAll(dnd5ePhbDataMapper.selectTools(name));
+        result.addAll(dnd5ePhbDataMapper.selectSpellList(name));
+        result.addAll(dnd5ePhbDataMapper.selectMagicItemsDmg(name));
+        result.addAll(dnd5ePhbDataMapper.selectRuleDmg(name));
+        result.addAll(dnd5ePhbDataMapper.selectMM(name));
+        result.addAll(dnd5ePhbDataMapper.selectBackgroundPhb(name));
+
+        result.addAll(dnd5ePhbDataMapper.selectEgtw(name));
+        result.addAll(dnd5ePhbDataMapper.selectBaseModule(name));
 
         return result;
     }
 
     @Override
     public QueryDataBase findById(long id) {
-        Dnd5ePhbDataMapper mapper = MyBatisUtil.getSqlSession().getMapper(Dnd5ePhbDataMapper.class);
-        return mapper.selectSkillPhbById(id);
+        return dnd5ePhbDataMapper.selectSkillPhbById(id);
     }
 
 
     @Override
     public QueryDataBase getRandomMMData() {
-        Dnd5ePhbDataMapper mapper = MyBatisUtil.getSqlSession().getMapper(Dnd5ePhbDataMapper.class);
-        MyBatisUtil.getSqlSession().clearCache();
-        return mapper.selectRandomMM();
+        return dnd5ePhbDataMapper.selectRandomMM();
     }
 
 
     @Override
-    public void sendMMImage(Object event, QueryDataBase result) {
+    public void sendMMImage(DiceMessageDTO data, QueryDataBase result) {
         String mmNameFileName = result.getName().substring(5) + ".png";
         String mmName = result.getName().substring(5) + ".png";
         mmNameFileName = URLEncoder.encode(mmNameFileName, StandardCharsets.UTF_8);
         String url = imagesUrl + mmNameFileName;
-        File imageFile = new File(localPath + mmName);
-        if (!imageFile.exists()) {
-            try {
-                FileUtil.downLoadFromUrl(url, localPath + mmName);
-            } catch (Exception e) {
-                RulatedayCore.INSTANCE.getLogger().info("下载" + result.getName().substring(5) + "图片失败，服务器可能没有该资源");
-            }
-        }
 
-
-        // TODO: 需要对不同的事件进行处理，如果是属于主动推送额外的数据的话
-        if (imageFile.exists()) {
-            EventUtils.eventCallback(event, new EventAdapter() {
-
-                @Override
-                public void group(GroupMessageEvent groupMessageEvent) {
-                    groupMessageEvent.getGroup().sendMessage(
-                            groupMessageEvent.getGroup().uploadImage(
-                                    ExternalResource.create(imageFile)
-                            )
-                    );
-                }
-
-                @Override
-                public void friend(FriendMessageEvent friendMessageEvent) {
-                    friendMessageEvent.getSender().sendMessage(friendMessageEvent.getSender()
-                            .uploadImage(ExternalResource.create(imageFile)));
-                }
-
-
-                @Override
-                public void groupTemp(GroupTempMessageEvent event) {
-                    event.getSender().sendMessage(
-                            event.getSender().uploadImage(
-                                    ExternalResource.create(imageFile)
-                            )
-                    );
-                }
-            });
+        if (data.getWsRequestBean().getParams().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
+            shamrockService.sendPrivateMessage(
+                    data.getSanderId(),
+                    new MessageContent().setTypeByImages(url)
+            );
+        } else {
+            shamrockService.sendGroupMessage(
+                    data.getSanderId(),
+                    data.getWsRequestBean().getParams().getGroup_id(),
+                    new MessageContent().setTypeByImages(url)
+            );
         }
     }
-
-
 
 
 }

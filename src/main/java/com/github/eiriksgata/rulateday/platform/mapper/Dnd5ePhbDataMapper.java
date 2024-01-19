@@ -1,10 +1,9 @@
 package com.github.eiriksgata.rulateday.platform.mapper;
 
 import com.github.eiriksgata.rulateday.platform.pojo.QueryDataBase;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -16,7 +15,6 @@ import java.util.List;
  **/
 
 @Mapper
-@Repository
 public interface Dnd5ePhbDataMapper {
 
     @Select("select * from dnd5e_skill_phb")
@@ -49,7 +47,6 @@ public interface Dnd5ePhbDataMapper {
     @Select("select * from dnd5e_tools_phb")
     List<QueryDataBase> selectAllToolsPhb();
 
-
     @Select("select * from dnd5e_armor_weapon_phb ORDER BY RANDOM() LIMIT 1")
     QueryDataBase selectRandomArmorWeapon();
 
@@ -59,26 +56,14 @@ public interface Dnd5ePhbDataMapper {
     @Select("select * from dnd5e_classes_phb where name like #{name}")
     List<QueryDataBase> selectClasses(@Param("name") String name);
 
-    @Select("select * from dnd5e_classes_phb")
-    List<QueryDataBase> selectAllClasses();
-
     @Select("select * from dnd5e_feat_phb where name like #{name}")
     List<QueryDataBase> selectFeat(@Param("name") String name);
-
-    @Select("select * from dnd5e_feat_phb")
-    List<QueryDataBase> selectAllFeat();
 
     @Select("select * from dnd5e_races_phb where name like #{name}")
     List<QueryDataBase> selectRaces(@Param("name") String name);
 
-    @Select("select * from dnd5e_races_phb ")
-    List<QueryDataBase> selectAllRaces();
-
     @Select("select * from dnd5e_rule_phb where name like #{name}")
     List<QueryDataBase> selectRule(@Param("name") String name);
-
-    @Select("select * from dnd5e_rule_phb")
-    List<QueryDataBase> selectAllRule();
 
     @Select("select * from dnd5e_tools_phb where name like #{name}")
     List<QueryDataBase> selectTools(@Param("name") String name);
@@ -95,23 +80,19 @@ public interface Dnd5ePhbDataMapper {
     @Select("select * from dnd5e_rule_dmg where name like #{name}")
     List<QueryDataBase> selectRuleDmg(@Param("name") String name);
 
-    @Select("select * from dnd5e_rule_dmg")
-    List<QueryDataBase> selectAllRuleDmg();
-
-
     @Select("select * from dnd5e_mm where name like #{name}")
     List<QueryDataBase> selectMM(@Param("name") String name);
 
     @Select("select * from dnd5e_background_phb where name like #{name}")
     List<QueryDataBase> selectBackgroundPhb(@Param("name") String name);
 
-    @Select("select * from dnd5e_background_phb")
-    List<QueryDataBase> selectAllBackgroundPhb();
-
     @Select("select * from dnd5e_creature_phb_dmg where name like #{name}")
     List<QueryDataBase> selectCreaturePhbDmg(@Param("name") String name);
 
-    @Select("select * from dnd5e_creature_phb_dmg")
-    List<QueryDataBase> selectAllCreaturePhbDmg();
+    @Select("select * from dnd5e_egtw where name like #{name}")
+    List<QueryDataBase> selectEgtw(@Param("name") String name);
 
+    @Select("select * from dnd5e_base_module where name like #{name}")
+    List<QueryDataBase> selectBaseModule(@Param("name") String name);
+    
 }

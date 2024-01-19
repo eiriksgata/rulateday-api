@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture;
 @Component
 public class EventHandler {
 
-    public void implement(String token, String payloadText) {
+    public void implement(String payloadText) {
         JSONObject jsonObject = JSONObject.parseObject(payloadText);
 
         String taskId = jsonObject.getString("echo");

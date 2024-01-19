@@ -1,44 +1,45 @@
 package com.github.eiriksgata.rulateday.dice.service.impl;
 
-import com.github.eiriksgata.rulateday.mapper.UserTempDataMapper;
-import com.github.eiriksgata.rulateday.pojo.UserTempData;
-import com.github.eiriksgata.rulateday.service.UserTempDataService;
-import com.github.eiriksgata.rulateday.utlis.MyBatisUtil;
+import com.github.eiriksgata.rulateday.dice.service.UserTempDataService;
+import com.github.eiriksgata.rulateday.platform.mapper.UserTempDataMapper;
+import com.github.eiriksgata.rulateday.platform.pojo.UserTempData;
 import com.github.eiriksgata.trpg.dice.config.DiceConfig;
 import org.apache.ibatis.exceptions.PersistenceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserTempDataServiceImpl implements UserTempDataService {
 
-    private static final UserTempDataMapper mapper = MyBatisUtil.getSqlSession().getMapper(UserTempDataMapper.class);
+    @Autowired
+    UserTempDataMapper userTempDataMapper;
 
     @Override
     public void updateUserAttribute(Long id, String attribute) {
         UserTempData userTempData = null;
         try {
-            userTempData = mapper.selectById(id);
+            userTempData = userTempDataMapper.selectById(id);
         } catch (PersistenceException e) {
-            mapper.createTable();
+            userTempDataMapper.createTable();
         }
         if (userTempData == null) {
             addUserTempData(id);
         }
-        mapper.updateAttributeById(id, attribute);
-        MyBatisUtil.getSqlSession().commit();
+        userTempDataMapper.updateAttributeById(id, attribute);
     }
 
     @Override
     public void updateUserDiceFace(Long id, int diceFace) {
         UserTempData userTempData = null;
         try {
-            userTempData = mapper.selectById(id);
+            userTempData = userTempDataMapper.selectById(id);
         } catch (PersistenceException e) {
-            mapper.createTable();
+            userTempDataMapper.createTable();
         }
         if (userTempData == null) {
             addUserTempData(id);
         }
-        mapper.updateDiceFaceById(id, diceFace);
-        MyBatisUtil.getSqlSession().commit();
+        userTempDataMapper.updateDiceFaceById(id, diceFace);
     }
 
 
@@ -51,18 +52,17 @@ public class UserTempDataServiceImpl implements UserTempDataService {
                 DiceConfig.diceSet.getString(
                         DiceConfig.diceSet.getString("dice.type") + ".face")
         ));
-        mapper.insert(userTempData);
-        MyBatisUtil.getSqlSession().commit();
+        userTempDataMapper.insert(userTempData);
     }
 
     @Override
     public Integer getUserDiceFace(Long id) {
         try {
-            return mapper.selectById(id).getDice_face();
+            return userTempDataMapper.selectById(id).getDice_face();
         } catch (NullPointerException ignored) {
             return null;
         } catch (PersistenceException e) {
-            mapper.createTable();
+            userTempDataMapper.createTable();
             return null;
         }
     }
@@ -70,11 +70,11 @@ public class UserTempDataServiceImpl implements UserTempDataService {
     @Override
     public String getUserAttribute(Long id) {
         try {
-            return mapper.selectById(id).getAttribute();
+            return userTempDataMapper.selectById(id).getAttribute();
         } catch (NullPointerException ignored) {
             return null;
         } catch (PersistenceException e) {
-            mapper.createTable();
+            userTempDataMapper.createTable();
             return null;
         }
     }

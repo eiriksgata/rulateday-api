@@ -2,6 +2,7 @@ package com.github.eiriksgata.rulateday.platform.websocket;
 
 import com.github.eiriksgata.rulateday.platform.exception.CommonBaseException;
 import com.github.eiriksgata.rulateday.platform.exception.CommonBaseExceptionEnum;
+import com.github.eiriksgata.rulateday.platform.websocket.api.ShamrockService;
 import com.github.eiriksgata.rulateday.platform.utils.SpringContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,10 +16,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-@Component
+
 @ServerEndpoint(value = "/ws/open-shamrock", configurator = GetHttpSessionConfigurator.class)
+@Component
 @Slf4j
-public class WsServerEndpoint {
+public class WsServerEndpoint{
 
     public static ConcurrentHashMap<String, WsServerEndpoint> channelList = new ConcurrentHashMap<>();
 
@@ -27,6 +29,18 @@ public class WsServerEndpoint {
     private String authorization;
 
     public Session session;
+
+    public ShamrockService shamrockService;
+
+
+    public String getAuthorization() {
+        return authorization;
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
 
     /**
      * 连接成功
@@ -55,9 +69,7 @@ public class WsServerEndpoint {
     public void onMessage(String text) {
         log.info(text);
         EventHandler eventHandler = SpringContextUtil.getBean(EventHandler.class);
-
-        eventHandler.implement(authorization, text);
-
+        eventHandler.implement( text);
     }
 
 
@@ -102,12 +114,4 @@ public class WsServerEndpoint {
             throw new CommonBaseException(CommonBaseExceptionEnum.WS_RESPONSE_TIMEOUT_ERROR);
         }
     }
-
-    public void sendPrivateMessage(Long id, String message) {
-
-    }
-
-
-
-
 }

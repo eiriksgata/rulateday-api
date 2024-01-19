@@ -1,10 +1,10 @@
 package com.github.eiriksgata.rulateday.dice.service.impl;
 
-import com.github.eiriksgata.rulateday.mapper.RuleBookMapper;
-import com.github.eiriksgata.rulateday.pojo.RuleBook;
-import com.github.eiriksgata.rulateday.service.RuleService;
-import com.github.eiriksgata.rulateday.utlis.MyBatisUtil;
+import com.github.eiriksgata.rulateday.dice.service.RuleService;
+import com.github.eiriksgata.rulateday.platform.mapper.RuleBookMapper;
+import com.github.eiriksgata.rulateday.platform.pojo.RuleBook;
 import com.github.eiriksgata.trpg.dice.reply.CustomText;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -17,8 +17,8 @@ import java.util.List;
  **/
 public class RuleServiceImpl implements RuleService {
 
-    @Resource
-    private static final RuleBookMapper ruleBookMapper = MyBatisUtil.getSqlSession().getMapper(RuleBookMapper.class);
+    @Autowired
+    RuleBookMapper ruleBookMapper;
 
     @Override
     public String selectRule(String title) {

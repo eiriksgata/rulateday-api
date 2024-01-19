@@ -1,12 +1,13 @@
 package com.github.eiriksgata.rulateday.dice.service;
 
-import net.mamoe.mirai.event.events.GroupMessageEvent;
-import net.mamoe.mirai.event.events.GroupMessagePostSendEvent;
+import com.github.eiriksgata.rulateday.dice.dto.DiceMessageDTO;
 
 public interface ChatRecordService {
-    void groupRecordHandler(GroupMessageEvent groupMessageEvent);
 
-    void botSelfMessageRecord(GroupMessagePostSendEvent groupMessagePostSendEvent);
+    void groupRecordHandler(DiceMessageDTO data);
 
-    void recordFileUpload(GroupMessageEvent groupMessageEvent);
+
+    void botSelfMessageRecord(DiceMessageDTO data);
+
+    String recordFileUpload(Long id);
 }

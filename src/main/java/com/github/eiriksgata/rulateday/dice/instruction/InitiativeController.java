@@ -1,14 +1,15 @@
 package com.github.eiriksgata.rulateday.dice.instruction;
 
-import com.github.eiriksgata.rulateday.event.EventAdapter;
-import com.github.eiriksgata.rulateday.event.EventUtils;
-import com.github.eiriksgata.rulateday.service.impl.UserInitiativeServerImpl;
+import com.github.eiriksgata.rulateday.dice.dto.DiceMessageDTO;
+import com.github.eiriksgata.rulateday.dice.service.UserInitiativeService;
+import com.github.eiriksgata.rulateday.platform.websocket.vo.shamrock.EventEnum;
 import com.github.eiriksgata.trpg.dice.injection.InstructReflex;
 import com.github.eiriksgata.trpg.dice.injection.InstructService;
+import com.github.eiriksgata.trpg.dice.operation.RollBasics;
 import com.github.eiriksgata.trpg.dice.reply.CustomText;
-import net.mamoe.mirai.event.events.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -19,28 +20,25 @@ import java.util.concurrent.atomic.AtomicBoolean;
  **/
 
 @InstructService
+@Component
 public class InitiativeController {
 
-    @Resource
-    public static UserInitiativeServerImpl initiativeServer = new UserInitiativeServerImpl();
+    @Autowired
+    UserInitiativeService initiativeService;
+
+    @Autowired
+    RollBasics rollBasics;
 
     @InstructReflex(value = {"atklist", "atkList"}, priority = 2)
     public String getAtkList(DiceMessageDTO data) {
-        final String[] resultText = {""};
-        EventUtils.eventCallback(data.getEvent(), new EventAdapter() {
-            @Override
-            public void group(GroupMessageEvent event) {
-                String group = "" + event.getGroup().getId();
-                resultText[0] = initiativeServer.showInitiativeList(group);
-            }
-
-            @Override
-            public void friend(FriendMessageEvent event) {
-                String group = "-" + event.getFriend().getId();
-                resultText[0] = initiativeServer.showInitiativeList(group);
-            }
-        });
-        return resultText[0];
+        String resultText;
+        String groupId;
+        if (data.getWsRequestBean().getParams().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
+            groupId = "-" + data.getWsRequestBean().getParams().getUser_id();
+        } else {
+            groupId = "" + data.getWsRequestBean().getParams().getGroup_id();
+        }
+        return initiativeService.showInitiativeList(groupId);
     }
 
 
@@ -48,53 +46,39 @@ public class InitiativeController {
     public String delAtk(DiceMessageDTO data) {
         String tempName = null;
         String resultText = CustomText.getText("initiative.delete.oneself");
-        if (!data.getMessage().equals("") && data.getMessage() != null) {
-            tempName = data.getMessage().trim();
+        if (data.getBody() != null && !data.getBody().equals("")) {
+            tempName = data.getBody().trim();
             resultText = CustomText.getText("initiative.delete.other", tempName);
         }
         String finalTempName = tempName;
-        EventUtils.eventCallback(data.getEvent(), new EventAdapter() {
-            @Override
-            public void group(GroupMessageEvent event) {
-                String groupId = "" + event.getGroup().getId();
-                String name = event.getSender().getNameCard();
-                if (name.equals("")) {
-                    name = event.getSender().getNick();
-                }
-                if (finalTempName != null) {
-                    name = finalTempName;
-                }
-                initiativeServer.deleteDice(groupId, event.getSender().getId(), name);
-            }
 
-            @Override
-            public void friend(FriendMessageEvent event) {
-                String groupId = "-" + event.getFriend().getId();
-                String name = event.getSender().getNick();
-                if (finalTempName != null) {
-                    name = finalTempName;
-                }
-                initiativeServer.deleteDice(groupId, event.getSender().getId(), name);
-            }
+        String groupId;
+        if (data.getWsRequestBean().getParams().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
+            groupId = "-" + data.getWsRequestBean().getParams().getUser_id();
+        } else {
+            groupId = "" + data.getWsRequestBean().getParams().getGroup_id();
+        }
 
-        });
+        String name = data.getWsRequestBean().getParams().getSender().getNickname();
+
+        if (finalTempName != null) {
+            name = finalTempName;
+        }
+        initiativeService.deleteDice(groupId, data.getWsRequestBean().getParams().getUser_id(), name);
+
         return resultText;
     }
 
 
     @InstructReflex(value = {"atkClear", "clearAtk", "atkclear", "AtkClear"}, priority = 2)
     public String clearAtkList(DiceMessageDTO data) {
-        EventUtils.eventCallback(data.getEvent(), new EventAdapter() {
-            @Override
-            public void group(GroupMessageEvent event) {
-                initiativeServer.clearGroupDice("" + event.getGroup().getId());
-            }
-
-            @Override
-            public void friend(FriendMessageEvent event) {
-                initiativeServer.clearGroupDice("-" + event.getFriend().getId());
-            }
-        });
+        String groupId;
+        if (data.getWsRequestBean().getParams().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
+            groupId = "-" + data.getWsRequestBean().getParams().getUser_id();
+        } else {
+            groupId = "" + data.getWsRequestBean().getParams().getGroup_id();
+        }
+        initiativeService.clearGroupDice(groupId);
         return CustomText.getText("initiative.clear");
     }
 
@@ -104,29 +88,24 @@ public class InitiativeController {
         String[] tempList;
         String diceFace = "d";
         AtomicBoolean isLimit = new AtomicBoolean(false);
-        EventUtils.eventCallback(data.getEvent(), new EventAdapter() {
-            @Override
-            public void group(GroupMessageEvent event) {
-                String groupId = "" + event.getGroup().getId();
-                isLimit.set(initiativeServer.diceLimit(groupId));
-                name[0] = event.getSenderName();
-            }
 
-            @Override
-            public void friend(FriendMessageEvent event) {
-                String groupId = "-" + event.getFriend().getId();
-                isLimit.set(initiativeServer.diceLimit(groupId));
-                name[0] = event.getSenderName();
-            }
-        });
+        String groupId;
+        if (data.getWsRequestBean().getParams().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
+            groupId = "-" + data.getWsRequestBean().getParams().getUser_id();
+        } else {
+            groupId = "" + data.getWsRequestBean().getParams().getGroup_id();
+        }
+
+        isLimit.set(initiativeService.diceLimit(groupId));
+        name[0] = data.getWsRequestBean().getParams().getSender().getNickname();
 
         if (isLimit.get()) {
             return CustomText.getText("initiative.list.size.max");
         }
 
         final String[] resultText = {CustomText.getText("initiative.result.title", name[0])};
-        if (!data.getMessage().equals("") && data.getMessage() != null) {
-            tempList = data.getMessage().split(" ");
+        if (data.getBody() != null && !data.getBody().equals("")) {
+            tempList = data.getBody().split(" ");
             if (tempList.length > 1) {
                 name[0] = tempList[1];
                 resultText[0] = CustomText.getText("initiative.result.title", name[0]);
@@ -134,7 +113,7 @@ public class InitiativeController {
             diceFace = tempList[0];
         }
         String finalName = name[0];
-        RollController.rollBasics.rollRandom(diceFace, data.getId(), (i, s) -> {
+        rollBasics.rollRandom(diceFace, data.getSanderId(), (i, s) -> {
             //处理可能会出现小数等其他情况
             int numberValue;
             try {
@@ -144,26 +123,10 @@ public class InitiativeController {
                 resultText[0] = CustomText.getText("initiative.parameter.format.error");
                 return;
             }
-
-            EventUtils.eventCallback(data.getEvent(), new EventAdapter() {
-                @Override
-                public void group(GroupMessageEvent event) {
-                    String groupId = "" + event.getGroup().getId();
-                    String name1 = event.getSender().getNameCard();
-                    if (finalName != null) name1 = finalName;
-                    initiativeServer.addInitiativeDice(
-                            groupId, event.getSender().getId(), name1, numberValue);
-                }
-
-                @Override
-                public void friend(FriendMessageEvent event) {
-                    String groupId = "-" + event.getFriend().getId();
-                    String name1 = event.getSender().getNick();
-                    if (finalName != null) name1 = finalName;
-                    initiativeServer.addInitiativeDice(
-                            groupId, event.getSender().getId(), name1, numberValue);
-                }
-            });
+            String name1 = data.getWsRequestBean().getParams().getSender().getNickname();
+            if (finalName != null) name1 = finalName;
+            initiativeService.addInitiativeDice(
+                    groupId, data.getSanderId(), name1, numberValue);
         });
         return resultText[0];
     }

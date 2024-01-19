@@ -1,67 +1,100 @@
 package com.github.eiriksgata.rulateday.dice.instruction;
 
+import com.github.eiriksgata.rulateday.dice.dto.DiceMessageDTO;
+import com.github.eiriksgata.rulateday.dice.trpggame.GameData;
+import com.github.eiriksgata.rulateday.dice.trpggame.TrpgGameUtils;
+import com.github.eiriksgata.rulateday.dice.trpggame.utils.PlayerRoleAttributeSetUtil;
+import com.github.eiriksgata.rulateday.platform.websocket.api.ShamrockService;
+import com.github.eiriksgata.rulateday.platform.websocket.vo.shamrock.EventEnum;
 import com.github.eiriksgata.trpg.dice.injection.InstructReflex;
 import com.github.eiriksgata.trpg.dice.injection.InstructService;
 import com.github.eiriksgata.trpg.dice.reply.CustomText;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 
 @InstructService
+@Component
 public class TrpgGameController {
+
+    @Autowired
+    ShamrockService shamrockService;
 
     @InstructReflex(value = {"trpg-list"}, priority = 3)
     public String trpgGameList(DiceMessageDTO data) {
-        return TrpgGameServiceImpl.getAllTrpgModelFiles();
+        return TrpgGameUtils.getAllTrpgModelFiles();
     }
 
     @InstructReflex(value = {"trpg-role-get"}, priority = 3)
     public String trpgRoleDataGet(DiceMessageDTO data) {
-        return PlayerRoleAttributeSetUtil.roleDataShow(data.getId());
+        return PlayerRoleAttributeSetUtil.roleDataShow(data.getSanderId());
     }
 
     @InstructReflex(value = {"trpg-role-set"}, priority = 3)
     public String trpgRoleDataSet(DiceMessageDTO data) {
-        String[] inputText = data.getMessage().split(",");
-        return CustomText.getText("trpg.role.card.set.title") + "\n1. " + PlayerRoleAttributeSetUtil.nameCheck(data.getId(), inputText[0]) + "\n2. " + PlayerRoleAttributeSetUtil.skillCheck(data.getId(), inputText[1]) + "\n3. " + PlayerRoleAttributeSetUtil.attributeCheck(data.getId(), inputText[2]);
+        String[] inputText = data.getBody().split(",");
+        return CustomText.getText("trpg.role.card.set.title") + "\n1. " +
+                PlayerRoleAttributeSetUtil.nameCheck(data.getSanderId(), inputText[0]) + "\n2. "
+                + PlayerRoleAttributeSetUtil.skillCheck(data.getSanderId(), inputText[1]) + "\n3. "
+                + PlayerRoleAttributeSetUtil.attributeCheck(data.getSanderId(), inputText[2]);
     }
 
     @InstructReflex(value = {"trpg-reload"}, priority = 3)
     public String trpgGameLoad(DiceMessageDTO data) {
         //TODO: 检测玩家数据是否满足要求
-        if (GameData.playerRoleSaveDataMap.get(data.getId()) == null || GameData.playerRoleSaveDataMap.get(data.getId()).getName() == null || GameData.playerRoleSaveDataMap.get(data.getId()).getAttribute() == null || GameData.playerRoleSaveDataMap.get(data.getId()).getSkill() == null || GameData.playerRoleSaveDataMap.get(data.getId()).getName().equals("") || GameData.playerRoleSaveDataMap.get(data.getId()).getAttribute().equals("") || GameData.playerRoleSaveDataMap.get(data.getId()).getSkill().equals("")) {
+        if (GameData.playerRoleSaveDataMap.get(data.getSanderId()) == null
+                || GameData.playerRoleSaveDataMap.get(data.getSanderId()).getName() == null
+                || GameData.playerRoleSaveDataMap.get(data.getSanderId()).getAttribute() == null
+                || GameData.playerRoleSaveDataMap.get(data.getSanderId()).getSkill() == null
+                || GameData.playerRoleSaveDataMap.get(data.getSanderId()).getName().equals("")
+                || GameData.playerRoleSaveDataMap.get(data.getSanderId()).getAttribute().equals("")
+                || GameData.playerRoleSaveDataMap.get(data.getSanderId()).getSkill().equals("")) {
             return CustomText.getText("trpg.reload.not.found.role.attribute");
         }
-        EventUtils.eventCallback(data.getEvent(), new EventAdapter() {
-            @Override
-            public void group(GroupMessageEvent event) {
-                event.getGroup().sendMessage(CustomText.getText("trpg.reload.start.help"));
-                event.getGroup().sendMessage(CustomText.getText("trpg.reload.start.waring"));
-                event.getGroup().sendMessage(TrpgGameServiceImpl.loadScriptData(data.getId(), data.getMessage()));
-            }
-        });
-        return TrpgGameServiceImpl.loadEventText(data.getId());
+        if (data.getWsRequestBean().getParams().getSub_type().equals(EventEnum.MessageSubType.NORMAL.getName())) {
+            shamrockService.sendGroupMessage(
+                    data.getSanderId(),
+                    data.getWsRequestBean().getParams().getGroup_id(),
+                    CustomText.getText("trpg.reload.start.help")
+            );
+            shamrockService.sendGroupMessage(
+                    data.getSanderId(),
+                    data.getWsRequestBean().getParams().getGroup_id(),
+                    CustomText.getText("trpg.reload.start.waring")
+            );
+            shamrockService.sendGroupMessage(
+                    data.getSanderId(),
+                    data.getWsRequestBean().getParams().getGroup_id(),
+                    TrpgGameUtils.loadScriptData(data.getSanderId(), data.getBody())
+            );
+        }
+        return TrpgGameUtils.loadEventText(data.getSanderId());
     }
 
 
     @InstructReflex(value = {"trpg-quit"}, priority = 3)
     public String quitGameModel(DiceMessageDTO data) {
-        TrpgGameServiceImpl.playerQuitGame(data.getId());
+        TrpgGameUtils.playerQuitGame(data.getSanderId());
         return CustomText.getText("trpg.game.quit");
     }
 
 
     @InstructReflex(value = {"trpg-option-"}, priority = 3)
     public String trpgOptionSelect(DiceMessageDTO data) {
-        if (GameData.TrpgGamePlayerList.get(data.getId()) == null || !GameData.TrpgGamePlayerList.get(data.getId())) {
+        if (GameData.TrpgGamePlayerList.get(data.getSanderId()) == null
+                || !GameData.TrpgGamePlayerList.get(data.getSanderId())) {
             return CustomText.getText("trpg.option.no.found.staring.model");
         } else {
             //TODO: 进行选项的动作
-            EventUtils.eventCallback(data.getEvent(), new EventAdapter() {
-                @Override
-                public void group(GroupMessageEvent event) {
-                    event.getGroup().sendMessage(TrpgGameServiceImpl.optionSelect(data.getId(), data.getMessage()));
-                }
-            });
-            return TrpgGameServiceImpl.loadEventText(data.getId());
+            if (data.getWsRequestBean().getParams().getSub_type().equals(EventEnum.MessageSubType.NORMAL.getName())) {
+
+                shamrockService.sendGroupMessage(
+                        data.getSanderId(),
+                        data.getWsRequestBean().getParams().getGroup_id(),
+                        TrpgGameUtils.optionSelect(data.getSanderId(), data.getBody())
+                );
+            }
+            return TrpgGameUtils.loadEventText(data.getSanderId());
         }
     }
 

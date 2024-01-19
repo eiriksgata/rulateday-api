@@ -3,7 +3,6 @@ package com.github.eiriksgata.rulateday.dice.config;
 import com.alibaba.fastjson.JSONObject;
 import com.github.eiriksgata.rulateday.dice.dto.GroupRecordDTO;
 import com.github.eiriksgata.rulateday.dice.utlis.HmacSHA256Util;
-import com.github.eiriksgata.rulateday.dice.utlis.OsUtils;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,5 +1,7 @@
 package com.github.eiriksgata.rulateday.dice.service;
-import com.github.eiriksgata.rulateday.pojo.QueryDataBase;
+
+import com.github.eiriksgata.rulateday.dice.dto.DiceMessageDTO;
+import com.github.eiriksgata.rulateday.platform.pojo.QueryDataBase;
 
 import java.util.List;
 
@@ -17,5 +19,5 @@ public interface Dnd5eLibService {
 
     QueryDataBase getRandomMMData();
 
-    void sendMMImage(Object event, QueryDataBase result) ;
+    void sendMMImage(DiceMessageDTO event, QueryDataBase result) ;
 }

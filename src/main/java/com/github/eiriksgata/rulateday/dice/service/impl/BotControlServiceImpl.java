@@ -47,7 +47,6 @@ public class BotControlServiceImpl implements BotControlService {
             } else {
                 speakersGroupListMapper.updateIsEnableById(groupId, true);
             }
-            MyBatisUtil.getSqlSession().commit();
         } catch (PersistenceException e) {
             speakersGroupListMapper.createTable();
         }
@@ -61,7 +60,6 @@ public class BotControlServiceImpl implements BotControlService {
             } else {
                 speakersGroupListMapper.updateIsEnableById(groupId, false);
             }
-            MyBatisUtil.getSqlSession().commit();
         } catch (PersistenceException e) {
             speakersGroupListMapper.createTable();
         }
@@ -76,7 +74,6 @@ public class BotControlServiceImpl implements BotControlService {
             } else {
                 speakersGroupListMapper.updateIsBlacklistById(groupId, true);
             }
-            MyBatisUtil.getSqlSession().commit();
         } catch (PersistenceException e) {
             speakersGroupListMapper.createTable();
         }
@@ -91,7 +88,6 @@ public class BotControlServiceImpl implements BotControlService {
             } else {
                 speakersGroupListMapper.updateIsBlacklistById(groupId, false);
             }
-            MyBatisUtil.getSqlSession().commit();
         } catch (PersistenceException e) {
             speakersGroupListMapper.createTable();
         }

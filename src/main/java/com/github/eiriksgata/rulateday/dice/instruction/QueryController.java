@@ -1,16 +1,17 @@
 package com.github.eiriksgata.rulateday.dice.instruction;
 
-import com.github.eiriksgata.rulateday.config.CustomDocumentHandler;
-import com.github.eiriksgata.rulateday.config.GlobalData;
-import com.github.eiriksgata.rulateday.init.LoadDatabaseFile;
-import com.github.eiriksgata.rulateday.pojo.QueryDataBase;
-import com.github.eiriksgata.rulateday.service.*;
-import com.github.eiriksgata.rulateday.service.impl.*;
+import com.github.eiriksgata.rulateday.dice.config.CustomDocumentHandler;
+import com.github.eiriksgata.rulateday.dice.config.GlobalData;
+import com.github.eiriksgata.rulateday.dice.dto.DiceMessageDTO;
+import com.github.eiriksgata.rulateday.dice.init.LoadDatabaseFile;
+import com.github.eiriksgata.rulateday.dice.service.*;
+import com.github.eiriksgata.rulateday.platform.pojo.QueryDataBase;
 import com.github.eiriksgata.trpg.dice.injection.InstructReflex;
 import com.github.eiriksgata.trpg.dice.injection.InstructService;
 import com.github.eiriksgata.trpg.dice.reply.CustomText;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,25 +19,25 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @InstructService
+@Component
 public class QueryController {
 
     public static ExecutorService cachedThread = Executors.newCachedThreadPool();
 
-    @Resource
-    private final CrazyLibraryService crazyLibraryService = new CrazyLibraryImpl();
+    @Autowired
+    CrazyLibraryService crazyLibraryService;
 
-    @Resource
-    private final Dnd5eLibService dnd5eLibService = new Dnd5eLibServiceImpl();
+    @Autowired
+    Dnd5eLibService dnd5eLibService;
 
-    @Resource
-    private final RuleService ruleService = new RuleServiceImpl();
+    @Autowired
+    RuleService ruleService;
 
-    @Resource
-    private final UserConversationService conversationService = new UserConversationImpl();
+    @Autowired
+    UserConversationService conversationService;
 
-    @Resource
-    public static final RandomPictureApiService randomPictureApiService = new RandomPictureApiImpl();
-
+    @Autowired
+    RandomPictureApiService randomPictureApiService;
 
     //发疯状态确认
     @InstructReflex(value = {"ti"})
@@ -52,22 +53,22 @@ public class QueryController {
 
     @InstructReflex(value = {"cr", "cr7"})
     public String queryCoc7Rule(DiceMessageDTO data) {
-        data.setMessage(data.getMessage().replaceAll(" ", ""));
-        return ruleService.selectRule(data.getMessage());
+        data.setBody(data.getBody().replaceAll(" ", ""));
+        return ruleService.selectRule(data.getBody());
     }
 
     @InstructReflex(value = {"dr", "d5er"})
     public String queryDnd5eRule(DiceMessageDTO data) {
         //如果输入的数据是无关键字的
-        if (data.getMessage().equals("")) {
+        if (data.getBody().equals("")) {
             return CustomText.getText("dr5e.rule.not.parameter");
         }
-        if (data.getMessage().equals(" ")) {
+        if (data.getBody().equals(" ")) {
             return CustomText.getText("dr5e.rule.not.parameter");
         }
 
         //先进行模糊查询
-        List<QueryDataBase> result = dnd5eLibService.findName("%" + data.getMessage() + "%");
+        List<QueryDataBase> result = dnd5eLibService.findName("%" + data.getBody() + "%");
         List<QueryDataBase> saveData = new ArrayList<>();
         if (result.size() > 1) {
             StringBuilder text = new StringBuilder(CustomText.getText("dr5e.rule.lib.result.list.title"));
@@ -83,7 +84,7 @@ public class QueryController {
                 count++;
             }
             //将记录暂时存入数据库
-            conversationService.saveConversation(data.getId(), saveData);
+            conversationService.saveConversation(data.getSanderId(), saveData);
             return text.toString();
 
         } else {
@@ -92,7 +93,8 @@ public class QueryController {
             }
             if (result.get(0).getName().length() > 5) {
                 if (result.get(0).getName().startsWith("怪物图鉴:")) {
-                    cachedThread.execute(() -> dnd5eLibService.sendMMImage(data.getEvent(), result.get(0)));
+                    cachedThread.execute(() ->
+                            dnd5eLibService.sendMMImage(data, result.get(0)));
                 }
             }
             return result.get(0).getName() + "\n" + result.get(0).getDescribe().replaceAll("\n\n", "\n");
@@ -112,7 +114,7 @@ public class QueryController {
     @InstructReflex(value = {"rmm"})
     public String rollMM(DiceMessageDTO data) {
         QueryDataBase result = dnd5eLibService.getRandomMMData();
-        cachedThread.execute(() -> dnd5eLibService.sendMMImage(data.getEvent(), result));
+        cachedThread.execute(() -> dnd5eLibService.sendMMImage(data, result));
         return result.getName() + "\n" + result.getDescribe().replaceAll("\n\n", "\n");
     }
 
@@ -120,9 +122,8 @@ public class QueryController {
     public String randomPicture(DiceMessageDTO data) {
         switch (GlobalData.randomPictureApiType) {
             case 1:
-                return randomPictureApiService.urlEncodeAPI(data, "https://api.ixiaowai.cn/api/api.php");
             case 2:
-                return randomPictureApiService.yinhuaAPI(data);
+                return randomPictureApiService.urlEncodeAPI(data, "https://api.ixiaowai.cn/api/api.php");
             case 3:
                 return randomPictureApiService.urlEncodeAPI(data, "https://api.ixiaowai.cn/mcapi/mcapi.php");
             case 4:
@@ -157,7 +158,6 @@ public class QueryController {
 
     @InstructReflex(value = {"modon"})
     public String modOpen(DiceMessageDTO data) {
-
         return "null";
     }
 
@@ -179,7 +179,7 @@ public class QueryController {
 
     @InstructReflex(value = {"q", "Q"}, priority = 3)
     public String queryModelCustom(DiceMessageDTO data) {
-        List<QueryDataBase> result = CustomDocumentHandler.find(data.getMessage());
+        List<QueryDataBase> result = CustomDocumentHandler.find(data.getBody());
         if (result == null) {
             return CustomText.getText("query.doc.lib.result.list.not.found");
         }
@@ -198,7 +198,7 @@ public class QueryController {
                 count++;
             }
             //将记录暂时存入数据库
-            conversationService.saveConversation(data.getId(), saveData);
+            conversationService.saveConversation(data.getSanderId(), saveData);
             return text.toString();
         } else {
             if (result.size() == 0) {
@@ -210,12 +210,12 @@ public class QueryController {
 
     @InstructReflex(value = {"tr-en"}, priority = 3)
     public String translateToEnglish(DiceMessageDTO data) {
-        if (data.getMessage() == null || data.getMessage().equals("")) {
+        if (data.getBody() == null || data.getBody().equals("")) {
             return CustomText.getText("translate.cn-to-en.not.found.content");
         }
-        if (data.getMessage().length() > 200) {
+        if (data.getBody().length() > 200) {
             return CustomText.getText("translate.cn-to-en.text.length.error");
         }
-        return OtherApiService.translateToEnglishByYouDu(data.getMessage());
+        return OtherApiService.translateToEnglishByYouDu(data.getBody());
     }
 }

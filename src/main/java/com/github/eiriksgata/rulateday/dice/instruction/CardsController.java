@@ -5,6 +5,7 @@ import com.github.eiriksgata.rulateday.platform.mapper.CardsGroupDataMapper;
 import com.github.eiriksgata.rulateday.platform.mapper.CardsTypeListMapper;
 import com.github.eiriksgata.rulateday.platform.pojo.CardsGroupData;
 import com.github.eiriksgata.rulateday.platform.pojo.CardsTypeList;
+import com.github.eiriksgata.rulateday.platform.websocket.api.ShamrockService;
 import com.github.eiriksgata.rulateday.platform.websocket.vo.shamrock.EventEnum;
 import com.github.eiriksgata.trpg.dice.injection.InstructReflex;
 import com.github.eiriksgata.trpg.dice.injection.InstructService;
@@ -31,6 +32,9 @@ public class CardsController {
 
     @Autowired
     CardsTypeListMapper cardsTypeListMapper;
+
+    @Autowired
+    ShamrockService shamrockService;
 
     @InstructReflex(value = {"cards"})
     public String cardsList(DiceMessageDTO data) {
@@ -82,28 +86,17 @@ public class CardsController {
             return CustomText.getText("cards.draw.not.found");
         }
         String[] addDataArr = cardsTypeList.getContent().split(",");
-        final Long[] groupId = new Long[1];
-        //TODO: 根据不同的消息事件类型使用不同的存储形式
-//        EventUtils.eventCallback(data.getEvent(), new EventAdapter() {
-//            @Override
-//            public void group(GroupMessageEvent event) {
-//                groupId[0] = event.getGroup().getId();
-//            }
-//
-//            @Override
-//            public void friend(FriendMessageEvent event) {
-//                groupId[0] = -event.getFriend().getId();
-//            }
-//
-//            @Override
-//            public void groupTemp(GroupTempMessageEvent event) {
-//                groupId[0] = event.getGroup().getId();
-//            }
-//        });
+        Long groupId;
+        if (data.getWsRequestBean().getParams().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
+            groupId = -data.getWsRequestBean().getParams().getUser_id();
+        } else {
+            groupId = data.getWsRequestBean().getParams().getGroup_id();
+        }
+
         for (String anAddDataArr : addDataArr) {
             CardsGroupData cardsGroupData = new CardsGroupData();
             cardsGroupData.setTypeId(cardsTypeList.getId());
-            cardsGroupData.setGroupId(groupId[0]);
+            cardsGroupData.setGroupId(groupId);
             cardsGroupData.setValue(anAddDataArr);
             cardsGroupDataMapper.insert(cardsGroupData);
         }
@@ -112,18 +105,15 @@ public class CardsController {
 
     @InstructReflex(value = {"drawList", "drawlist"}, priority = 3)
     public String drawList(DiceMessageDTO data) {
-
         boolean isGroupMessage = Objects.equals(
                 data.getWsRequestBean().getParams().getSub_type(),
-                EventEnum.MessageSubType.GROUP.getName());
+                EventEnum.MessageSubType.NORMAL.getName());
         Long groupId = isGroupMessage ? data.getWsRequestBean().getParams().getGroup_id() :
-                data.getWsRequestBean().getParams().getUser_id();
+                -data.getWsRequestBean().getParams().getUser_id();
 
         List<CardsGroupData> list = cardsGroupDataMapper.getGroupCardsList(
-                groupId,
-                isGroupMessage ? 1 : 0
+                groupId
         );
-
         if (list.size() <= 0) {
             return CustomText.getText("cards.draw.not.data");
         }
@@ -141,106 +131,59 @@ public class CardsController {
     public String drawHideOut(DiceMessageDTO data) {
         Long groupId;
         if (data.getWsRequestBean().getParams().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
-            groupId = data.getWsRequestBean().getParams().getUser_id();
-        }
-
-        data.getWsServerEndpoint().getSender().sendMessage(
-                CustomText.getText(
-                        "cards.draw.hide.group.result",
-                        groupId, result.getValue())
-        );
-
-        @Override
-        public void group (GroupMessageEvent event){
-            groupId[0] = event.getGroup().getId();
-            CardsGroupData result = cardsGroupDataMapper.randomGetCard(groupId[0]);
-            event.getSender().sendMessage(
-                    CustomText.getText("cards.draw.hide.group.result",
-                            event.getGroup().getId(), result.getValue())
+            groupId = -data.getSanderId();
+            CardsGroupData result = cardsGroupDataMapper.randomGetCard(groupId);
+            shamrockService.sendPrivateMessage(
+                    data.getSanderId(),
+                    CustomText.getText(
+                            "cards.draw.hide.group.result",
+                            groupId, result.getValue())
+            );
+        } else {
+            groupId = data.getWsRequestBean().getParams().getGroup_id();
+            CardsGroupData result = cardsGroupDataMapper.randomGetCard(groupId);
+            shamrockService.sendGroupMessage(
+                    data.getSanderId(),
+                    data.getWsRequestBean().getParams().getGroup_id(),
+                    CustomText.getText(
+                            "cards.draw.hide.group.result",
+                            groupId, result.getValue())
             );
         }
-
-        @Override
-        public void friend (FriendMessageEvent event){
-            groupId[0] = -event.getFriend().getId();
-            CardsGroupData result = cardsGroupDataMapper.randomGetCard(groupId[0]);
-            event.getSender().sendMessage(
-                    CustomText.getText("cards.draw.hide.friend.result",
-                            event.getFriend().getId(), result.getValue())
-            );
-
-        }
-
-        @Override
-        public void groupTemp (GroupTempMessageEvent event){
-            groupId[0] = event.getGroup().getId();
-            CardsGroupData result = cardsGroupDataMapper.randomGetCard(groupId[0]);
-            event.getSender().sendMessage(
-                    CustomText.getText("cards.draw.hide.group.result",
-                            event.getGroup().getId(), result.getValue())
-            );
-        }
-    });
-
-    CardsGroupData result = cardsGroupDataMapper.randomGetCard(groupId[0]);
-        if(result ==null)
-
-    {
-        return CustomText.getText("cards.draw.not.data");
-    }
-        cardsGroupDataMapper.deleteById(result.getId());
-        return CustomText.getText("cards.draw.hide.success");
-}
-
-    @InstructReflex(value = {"draw"}, priority = 2)
-    public String drawOut(DiceMessageDTO data) {
-        final long[] groupId = new long[1];
-        EventUtils.eventCallback(data.getEvent(), new EventAdapter() {
-            @Override
-            public void group(GroupMessageEvent event) {
-                groupId[0] = event.getGroup().getId();
-            }
-
-            @Override
-            public void friend(FriendMessageEvent event) {
-                groupId[0] = -event.getFriend().getId();
-            }
-
-            @Override
-            public void groupTemp(GroupTempMessageEvent event) {
-                groupId[0] = event.getGroup().getId();
-            }
-        });
-        CardsGroupData result = cardsGroupDataMapper.randomGetCard(groupId[0]);
+        CardsGroupData result = cardsGroupDataMapper.randomGetCard(groupId);
         if (result == null) {
             return CustomText.getText("cards.draw.not.data");
         }
         cardsGroupDataMapper.deleteById(result.getId());
-        MyBatisUtil.getSqlSession().commit();
+        return CustomText.getText("cards.draw.hide.success");
+    }
+
+    @InstructReflex(value = {"draw"}, priority = 2)
+    public String drawOut(DiceMessageDTO data) {
+        Long groupId;
+        if (data.getWsRequestBean().getParams().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
+            groupId = -data.getSanderId();
+        } else {
+            groupId = data.getWsRequestBean().getParams().getGroup_id();
+        }
+
+        CardsGroupData result = cardsGroupDataMapper.randomGetCard(groupId);
+        if (result == null) {
+            return CustomText.getText("cards.draw.not.data");
+        }
+        cardsGroupDataMapper.deleteById(result.getId());
         return CustomText.getText("cards.draw.success", result.getValue());
     }
 
     @InstructReflex(value = {"drawclear", "drawClear"}, priority = 3)
     public String drawClear(DiceMessageDTO data) {
-        EventUtils.eventCallback(data.getEvent(), new EventAdapter() {
-            @Override
-            public void group(GroupMessageEvent event) {
-                cardsGroupDataMapper.clearByGroupId(event.getGroup().getId());
-                MyBatisUtil.getSqlSession().commit();
-            }
-
-            @Override
-            public void friend(FriendMessageEvent event) {
-                cardsGroupDataMapper.clearByGroupId(-event.getFriend().getId());
-                MyBatisUtil.getSqlSession().commit();
-            }
-
-            @Override
-            public void groupTemp(GroupTempMessageEvent event) {
-                cardsGroupDataMapper.clearByGroupId(event.getGroup().getId());
-                MyBatisUtil.getSqlSession().commit();
-            }
-        });
+        Long groupId;
+        if (data.getWsRequestBean().getParams().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
+            groupId = -data.getSanderId();
+        } else {
+            groupId = data.getWsRequestBean().getParams().getGroup_id();
+        }
+        cardsGroupDataMapper.clearByGroupId(groupId);
         return CustomText.getText("cards.draw.clear");
     }
 

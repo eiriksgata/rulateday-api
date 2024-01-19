@@ -1,7 +1,7 @@
 package com.github.eiriksgata.rulateday.dice.trpggame;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.eiriksgata.rulateday.trpggame.entity.PlayerRoleDataEntity;
+import com.github.eiriksgata.rulateday.dice.trpggame.entity.PlayerRoleDataEntity;
 
 import java.util.HashMap;
 import java.util.Map;

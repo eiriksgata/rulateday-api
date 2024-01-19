@@ -1,6 +1,6 @@
 package com.github.eiriksgata.rulateday.dice.trpggame.utils;
 
-import com.github.eiriksgata.rulateday.trpggame.DetectionEntity;
+import com.github.eiriksgata.rulateday.dice.trpggame.DetectionEntity;
 import com.github.eiriksgata.trpg.dice.reply.CustomText;
 import com.github.eiriksgata.trpg.dice.utlis.RegularExpressionUtils;
 import org.apache.commons.lang3.RandomUtils;

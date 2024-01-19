@@ -1,7 +1,7 @@
 package com.github.eiriksgata.rulateday.dice.trpggame.utils;
 
-import com.github.eiriksgata.rulateday.trpggame.GameData;
-import com.github.eiriksgata.rulateday.trpggame.entity.PlayerRoleDataEntity;
+import com.github.eiriksgata.rulateday.dice.trpggame.GameData;
+import com.github.eiriksgata.rulateday.dice.trpggame.entity.PlayerRoleDataEntity;
 import com.github.eiriksgata.trpg.dice.reply.CustomText;
 import com.github.eiriksgata.trpg.dice.utlis.RegularExpressionUtils;
 import org.apache.commons.lang3.RandomUtils;

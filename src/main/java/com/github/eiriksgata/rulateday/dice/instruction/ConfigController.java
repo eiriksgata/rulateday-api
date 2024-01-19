@@ -1,16 +1,23 @@
 package com.github.eiriksgata.rulateday.dice.instruction;
 
-import com.github.eiriksgata.rulateday.config.GlobalData;
-import com.github.eiriksgata.rulateday.service.DiceConfigService;
-import com.github.eiriksgata.rulateday.utlis.MyBatisUtil;
+import com.github.eiriksgata.rulateday.dice.config.GlobalData;
+import com.github.eiriksgata.rulateday.dice.dto.DiceMessageDTO;
+import com.github.eiriksgata.rulateday.platform.mapper.DiceConfigMapper;
 import com.github.eiriksgata.trpg.dice.injection.InstructReflex;
 import com.github.eiriksgata.trpg.dice.injection.InstructService;
 import com.github.eiriksgata.trpg.dice.reply.CustomText;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ResourceBundle;
 
 @InstructService
+@Component
 public class ConfigController {
+
+
+    @Autowired
+    DiceConfigMapper diceConfigMapper;
 
     @InstructReflex(value = {"pcon"}, priority = 3)
     public String privateChatOn(DiceMessageDTO data) {
@@ -19,9 +26,8 @@ public class ConfigController {
         if (number.equals("")) {
             return CustomText.getText("dice.master.number.no.set");
         }
-        if (data.getId() == Long.parseLong(number)) {
-            DiceConfigService.diceConfigMapper.updateByPrivateChat(true);
-            MyBatisUtil.getSqlSession().commit();
+        if (data.getSanderId() == Long.parseLong(number)) {
+            diceConfigMapper.updateByPrivateChat(true);
             return CustomText.getText("dice.private.chat.enable");
         } else {
             return CustomText.getText("dice.private.chat.no.permission");
@@ -34,9 +40,8 @@ public class ConfigController {
         if (number.equals("")) {
             return CustomText.getText("dice.master.number.no.set");
         }
-        if (data.getId() == Long.parseLong(number)) {
-            DiceConfigService.diceConfigMapper.updateByPrivateChat(false);
-            MyBatisUtil.getSqlSession().commit();
+        if (data.getSanderId() == Long.parseLong(number)) {
+            diceConfigMapper.updateByPrivateChat(false);
             return CustomText.getText("dice.private.chat.disable");
         } else {
             return CustomText.getText("dice.private.chat.no.permission");
@@ -49,9 +54,8 @@ public class ConfigController {
         if (number == null || number.equals("")) {
             return CustomText.getText("dice.master.number.no.set");
         }
-        if (data.getId() == Long.parseLong(number)) {
-            DiceConfigService.diceConfigMapper.updateByBetaVersion(true);
-            MyBatisUtil.getSqlSession().commit();
+        if (data.getSanderId() == Long.parseLong(number)) {
+            diceConfigMapper.updateByBetaVersion(true);
             return CustomText.getText("dice.beta.enable");
         } else {
             return CustomText.getText("dice.beta.no.permission");
@@ -64,9 +68,8 @@ public class ConfigController {
         if (number.equals("")) {
             return CustomText.getText("dice.master.number.no.set");
         }
-        if (data.getId() == Long.parseLong(number)) {
-            DiceConfigService.diceConfigMapper.updateByBetaVersion(false);
-            MyBatisUtil.getSqlSession().commit();
+        if (data.getSanderId() == Long.parseLong(number)) {
+            diceConfigMapper.updateByBetaVersion(false);
             return CustomText.getText("dice.beta.disable");
         } else {
             return CustomText.getText("dice.beta.no.permission");
