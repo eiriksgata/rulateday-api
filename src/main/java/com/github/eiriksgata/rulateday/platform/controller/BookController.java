@@ -229,33 +229,5 @@ public class BookController {
         return ResponseBean.success();
     }
 
-    @PutMapping("/book/test/import/coc7")
-    public ResponseBean<?> bookTestImportCoc7() {
-        List<RuleBook> list = ruleBookMapper.selectAll();
-        for (RuleBook ruleBook : list) {
-            BookChapter bookChapter = new BookChapter();
-            bookChapter.setBookId(1);
-            bookChapter.setStatus("1");
-            bookChapter.setTitle(ruleBook.getTitle());
-            bookChapter.setChapter(ruleBook.getContent());
-            bookService.saveBookChapter(bookChapter);
-        }
-        return ResponseBean.success();
-    }
-
-    @PutMapping("/book/test/import/infinite")
-    public ResponseBean<?> bookTestImportInfinite() {
-        List<QueryDataBase> list = infiniteLibLuMapper.selectAll();
-        for (QueryDataBase queryDataBase : list) {
-            BookChapter bookChapter = new BookChapter();
-            bookChapter.setBookId(3);
-            bookChapter.setStatus("1");
-            bookChapter.setTitle(queryDataBase.getName());
-            bookChapter.setChapter(queryDataBase.getDescribe());
-            bookService.saveBookChapter(bookChapter);
-        }
-        return ResponseBean.success();
-    }
-
 
 }

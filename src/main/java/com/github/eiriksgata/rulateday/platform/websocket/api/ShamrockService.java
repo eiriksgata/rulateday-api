@@ -1,6 +1,8 @@
 package com.github.eiriksgata.rulateday.platform.websocket.api;
 
+import com.github.eiriksgata.rulateday.platform.websocket.WsServerEndpoint;
 import com.github.eiriksgata.rulateday.platform.websocket.vo.shamrock.MessageContent;
+import com.github.eiriksgata.rulateday.platform.websocket.vo.shamrock.api.FriedInfoVo;
 import com.github.eiriksgata.rulateday.platform.websocket.vo.shamrock.api.GroupInfoVo;
 
 import java.util.List;
@@ -8,13 +10,15 @@ import java.util.List;
 public interface ShamrockService {
 
 
-    void sendPrivateMessage(Long id, String message);
+    void sendPrivateMessage(Long id, String message, WsServerEndpoint wsServerEndpoint);
 
-    void sendGroupMessage(Long userId, Long groupId, String message);
+    void sendGroupMessage(Long userId, Long groupId, String message, WsServerEndpoint wsServerEndpoint);
 
-    void sendPrivateMessage(Long userId, MessageContent messageContent);
+    void sendPrivateMessage(Long userId, List<MessageContent> messageContentList, WsServerEndpoint wsServerEndpoint);
 
-    void sendGroupMessage(Long userId, Long groupId, MessageContent messageContent);
+    void sendGroupMessage(Long userId, Long groupId, List<MessageContent> messageContentList, WsServerEndpoint wsServerEndpoint);
 
-    List<GroupInfoVo> getGroupList();
+    List<GroupInfoVo> getGroupList(WsServerEndpoint wsServerEndpoint);
+
+    List<FriedInfoVo> getFriendList(WsServerEndpoint wsServerEndpoint);
 }

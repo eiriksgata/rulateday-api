@@ -7,8 +7,8 @@ public class DiceConfigEntity {
 
     private Integer id;
 
-    private Boolean private_chat;
+    private Integer private_chat;
 
-    private Boolean beta_version;
+    private Integer beta_version;
 
 }

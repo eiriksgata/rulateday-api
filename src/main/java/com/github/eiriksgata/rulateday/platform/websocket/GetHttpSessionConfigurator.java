@@ -19,7 +19,6 @@ public class GetHttpSessionConfigurator extends Configurator {
 
     @Override
     public void modifyHandshake(ServerEndpointConfig sec, HandshakeRequest request, HandshakeResponse response) {
-        // TODO Auto-generated method stub
         String authorization = request.getHeaders().get("authorization").get(0);
         if (authorization != null) {
             authorization = authorization.substring("bearer ".length());

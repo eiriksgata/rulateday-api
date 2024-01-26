@@ -19,10 +19,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     @Override
     @Transactional(rollbackFor = CommonBaseException.class)
     public void deleteByPermissionId(Long permissionId) {
-        //TODO: 需要移除相关的关联关系
         rolePermissionMapper.deleteRelByPermissionId(permissionId);
-
-        //remove
         baseMapper.deleteById(permissionId);
     }
 

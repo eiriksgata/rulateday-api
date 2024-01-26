@@ -87,7 +87,6 @@ public class RBACController {
 
     @DeleteMapping("/permission/{id}")
     public ResponseBean<?> permissionRemove(@PathVariable("id") long permissionId) {
-        //TODO
         permissionService.deleteByPermissionId(permissionId);
         return ResponseBean.success();
     }

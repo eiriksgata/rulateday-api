@@ -133,7 +133,6 @@ public class AuthServiceImpl implements AuthService {
         //获取用户信息
         UserDetail userDetail = (UserDetail) authentication.getPrincipal();
         if (passwordEncoder.matches(userPasswordResetVo.getOldPassword(), userDetail.getPassword())) {
-            //TODO: 更改密码
             User user = userService.selectByUsername(userDetail.getUsername());
             user.setPassword(passwordEncoder.encode(userPasswordResetVo.getNewPassword()));
             user.setUpdatedAt(new Date());

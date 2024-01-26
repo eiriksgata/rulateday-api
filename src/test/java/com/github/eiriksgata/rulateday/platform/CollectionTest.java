@@ -14,6 +14,8 @@ import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class CollectionTest {
@@ -148,9 +150,16 @@ public class CollectionTest {
 
     }
 
-
+    @Test
     public void testMessageContent() {
+        Map<String,String> map = new HashMap<>();
+        map.put("authorization","Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcwMzc0Njk3NSwiaXNzIjoiYXBpLnJ1bGF0ZWRheWRpY2UudG9wIiwiZXhwIjoxOTIyMjg0ODAwLCJyb2xlcyI6WyJBRE1JTiJdfQ.NRVrE91D_50ogJmYZp8VhIA-TC92aLGpN64iWqIxe6PUZISYZ0d8mF-y6H8xd9LDhLFhC6crdrzqmVEQ-VRFYw");
 
+        String result =  RestUtil.get(
+                "http://10.30.30.30:24002/control-platform/server/api/v1/sub/platform/digital/community/query/personnel/interviewee/00450e66adf54db887dfc55447cc877a/12345678901",
+                map);
+
+        System.out.println(result);
 
 
 

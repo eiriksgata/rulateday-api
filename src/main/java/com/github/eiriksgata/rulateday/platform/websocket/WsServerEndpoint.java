@@ -2,7 +2,6 @@ package com.github.eiriksgata.rulateday.platform.websocket;
 
 import com.github.eiriksgata.rulateday.platform.exception.CommonBaseException;
 import com.github.eiriksgata.rulateday.platform.exception.CommonBaseExceptionEnum;
-import com.github.eiriksgata.rulateday.platform.websocket.api.ShamrockService;
 import com.github.eiriksgata.rulateday.platform.utils.SpringContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -16,22 +15,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-
 @ServerEndpoint(value = "/ws/open-shamrock", configurator = GetHttpSessionConfigurator.class)
 @Component
 @Slf4j
-public class WsServerEndpoint{
+public class WsServerEndpoint {
 
-    public static ConcurrentHashMap<String, WsServerEndpoint> channelList = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, WsServerEndpoint> channelList = new ConcurrentHashMap<>();
 
     public static final ConcurrentHashMap<String, CompletableFuture<String>> responseFutures = new ConcurrentHashMap<>();
 
     private String authorization;
 
     public Session session;
-
-    public ShamrockService shamrockService;
-
 
     public String getAuthorization() {
         return authorization;
@@ -40,7 +35,6 @@ public class WsServerEndpoint{
     public Session getSession() {
         return session;
     }
-
 
     /**
      * 连接成功
@@ -67,9 +61,11 @@ public class WsServerEndpoint{
      */
     @OnMessage
     public void onMessage(String text) {
-        log.info(text);
         EventHandler eventHandler = SpringContextUtil.getBean(EventHandler.class);
-        eventHandler.implement( text);
+        InheritableThreadLocal<String> authorizationThreadLocal = new InheritableThreadLocal<>();
+        authorizationThreadLocal.set(authorization);
+        eventHandler.implement(authorization, text);
+        authorizationThreadLocal.remove();
     }
 
 
@@ -82,7 +78,7 @@ public class WsServerEndpoint{
 
     public void sendMessage(String message) {
         try {
-            this.session.getBasicRemote().sendText(message);
+            session.getBasicRemote().sendText(message);
         } catch (IOException e) {
             e.printStackTrace();
             log.error(e.toString());
