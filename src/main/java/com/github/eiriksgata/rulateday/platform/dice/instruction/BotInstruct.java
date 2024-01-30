@@ -4,6 +4,7 @@ import com.github.eiriksgata.rulateday.platform.dice.config.GlobalData;
 import com.github.eiriksgata.rulateday.platform.dice.dto.DiceMessageDTO;
 import com.github.eiriksgata.rulateday.platform.dice.service.BotControlService;
 import com.github.eiriksgata.rulateday.platform.websocket.api.ShamrockService;
+import com.github.eiriksgata.rulateday.platform.websocket.vo.shamrock.EventEnum;
 import com.github.eiriksgata.rulateday.platform.websocket.vo.shamrock.api.FriedInfoVo;
 import com.github.eiriksgata.rulateday.platform.websocket.vo.shamrock.api.GroupInfoVo;
 import com.github.eiriksgata.trpg.dice.injection.InstructReflex;
@@ -154,7 +155,7 @@ public class BotInstruct {
 
     @InstructReflex(value = {"friend-list-del"}, priority = 3)
     public String deleteFriend(DiceMessageDTO data) {
-        return null;
+        return "功能未实现";
 //        String number = GlobalData.configData.getString("master.QQ.number");
 //        if (number.equals("")) {
 //            return CustomText.getText("dice.master.number.no.set");
@@ -181,23 +182,16 @@ public class BotInstruct {
 
     @InstructReflex(value = {"dismiss"}, priority = 3)
     public String dismissCurrentGroup(DiceMessageDTO data) {
-        String number = GlobalData.configData.getString("master.QQ.number");
-        //TODO: 退出当前群聊
-//        EventUtils.eventCallback(data.getEvent(), new EventAdapter() {
-//            @Override
-//            public void group(GroupMessageEvent event) {
-//                event.getGroup().sendMessage(CustomText.getText("bot.group.dismiss"));
-//
-//                if (event.getSender().getPermission().getLevel() == MemberPermission.ADMINISTRATOR.getLevel() ||
-//                        event.getSender().getPermission().getLevel() == MemberPermission.OWNER.getLevel() ||
-//                        data.getId() == Long.parseLong(number)
-//                ) {
-//                    event.getGroup().quit();
-//                } else {
-//                    event.getGroup().sendMessage(CustomText.getText("bot.group.dismiss.no.permission"));
-//                }
-//            }
-//        });
+        // String number = GlobalData.configData.getString("master.QQ.number");
+        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.NORMAL.getName())) {
+            shamrockService.quitGroup(data.getMessageEvent().getGroup_id(), data.getWsServerEndpoint());
+            shamrockService.sendGroupMessage(
+                    data.getSanderId(),
+                    data.getMessageEvent().getGroup_id(),
+                    CustomText.getText("bot.group.dismiss"),
+                    data.getWsServerEndpoint()
+            );
+        }
         return null;
     }
 
@@ -207,43 +201,28 @@ public class BotInstruct {
         if (!number.equals("" + data.getSanderId())) {
             return CustomText.getText("bot.group.quit.no.permission");
         }
-        int groupId;
+        Long groupId;
         if (data.getBody().matches("^\\d{1,20}$")) {
-            groupId = Integer.parseInt(data.getBody());
+            groupId = Long.parseLong(data.getBody());
         } else {
             return CustomText.getText("bot.group.quit.id.error");
         }
-        //TODO: 退出指定群聊
-//        EventUtils.eventCallback(data.getEvent(), new EventAdapter() {
-//            @Override
-//            public void group(GroupMessageEvent event) {
-//                Group group = event.getBot().getGroup(groupId);
-//                if (group == null) {
-//                    event.getGroup().sendMessage(CustomText.getText("bot.group.quit.not.found", groupId));
-//                } else {
-//                    if (group.quit()) {
-//                        event.getGroup().sendMessage(CustomText.getText("bot.group.quit.success", groupId));
-//                    } else {
-//                        event.getGroup().sendMessage(CustomText.getText("bot.group.quit.fail", groupId));
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void friend(FriendMessageEvent event) {
-//                Group group = event.getBot().getGroup(groupId);
-//                if (group == null) {
-//                    event.getSender().sendMessage(CustomText.getText("bot.group.quit.not.found", groupId));
-//                } else {
-//                    if (group.quit()) {
-//                        event.getSender().sendMessage(CustomText.getText("bot.group.quit.success", groupId));
-//                    } else {
-//                        event.getSender().sendMessage(CustomText.getText("bot.group.quit.fail", groupId));
-//                    }
-//                }
-//            }
-//        });
-
+        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
+            shamrockService.quitGroup(groupId, data.getWsServerEndpoint());
+            shamrockService.sendPrivateMessage(
+                    data.getSanderId(),
+                    CustomText.getText("bot.group.quit.success", groupId),
+                    data.getWsServerEndpoint()
+            );
+        } else {
+            shamrockService.quitGroup(groupId, data.getWsServerEndpoint());
+            shamrockService.sendGroupMessage(
+                    data.getSanderId(),
+                    data.getMessageEvent().getGroup_id(),
+                    CustomText.getText("bot.group.quit.success", groupId),
+                    data.getWsServerEndpoint()
+            );
+        }
         return null;
     }
 }

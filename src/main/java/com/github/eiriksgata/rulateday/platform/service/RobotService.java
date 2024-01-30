@@ -16,7 +16,7 @@ public interface RobotService {
 
     List<RobotToken> getRobots();
 
-    void cryptoHeadersVerification(String authorization);
+    RobotToken cryptoHeadersVerification(String authorization);
 
 
 }

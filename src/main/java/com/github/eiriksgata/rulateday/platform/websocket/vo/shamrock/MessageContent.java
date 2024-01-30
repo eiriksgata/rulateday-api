@@ -1,7 +1,9 @@
 package com.github.eiriksgata.rulateday.platform.websocket.vo.shamrock;
 
 import com.alibaba.fastjson.JSONObject;
+import lombok.Data;
 
+@Data
 public class MessageContent {
 
     private String type;

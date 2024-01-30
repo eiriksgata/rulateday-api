@@ -122,16 +122,19 @@ public class QueryInstruct {
     public String randomPicture(DiceMessageDTO data) {
         switch (GlobalData.randomPictureApiType) {
             case 1:
+                return randomPictureApiService.urlEncodeAPI(data, "https://cdn.seovx.com/d/?mom=302");
             case 2:
-                return randomPictureApiService.urlEncodeAPI(data, "https://api.ixiaowai.cn/api/api.php");
+                return randomPictureApiService.urlEncodeAPI(data, "https://app.zichen.zone/api/acg.php");
             case 3:
-                return randomPictureApiService.urlEncodeAPI(data, "https://api.ixiaowai.cn/mcapi/mcapi.php");
+                return randomPictureApiService.urlEncodeAPI(data, "https://www.dmoe.cc/random.php");
             case 4:
-                return randomPictureApiService.urlEncodeAPI(data, "https://api.paugram.com/wallpaper");
+                return randomPictureApiService.urlEncodeAPI(data, "https://img.paulzzh.com/touhou/random");
             case 5:
-                return randomPictureApiService.urlEncodeAPI(data, "https://api.yimian.xyz/img");
+                return randomPictureApiService.urlEncodeAPI(data, "https://img.xjh.me/random_img.php");
             case 6:
-                return randomPictureApiService.urlEncodeAPI(data, "https://img.paulzzh.tech/touhou/random");
+                return randomPictureApiService.urlEncodeAPI(data, "https://api.btstu.cn/sjbz/api.php?lx=dongman&format=images");
+            case 7:
+                return randomPictureApiService.urlEncodeAPI(data, "https://cdn.seovx.com/?mom=302");
         }
         return null;
     }

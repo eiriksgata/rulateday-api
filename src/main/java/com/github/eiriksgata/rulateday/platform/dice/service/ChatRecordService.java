@@ -6,8 +6,7 @@ public interface ChatRecordService {
 
     void groupRecordHandler(DiceMessageDTO data);
 
-
-    void botSelfMessageRecord(DiceMessageDTO data);
+    void botSelfMessageRecord(Long groupId,String nickname, Long selfId, String message);
 
     String recordFileUpload(Long id);
 }

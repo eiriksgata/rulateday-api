@@ -34,3 +34,4 @@ build/
 /application-config.yaml
 import
 resources
+config

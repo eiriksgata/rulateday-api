@@ -1,14 +1,19 @@
 package com.github.eiriksgata.rulateday.platform.websocket;
 
+import cn.hutool.core.thread.ThreadUtil;
 import com.github.eiriksgata.rulateday.platform.exception.CommonBaseException;
 import com.github.eiriksgata.rulateday.platform.exception.CommonBaseExceptionEnum;
 import com.github.eiriksgata.rulateday.platform.utils.SpringContextUtil;
+import com.github.eiriksgata.rulateday.platform.utils.ThreadPool;
+import com.github.eiriksgata.rulateday.platform.websocket.api.ShamrockService;
+import com.github.eiriksgata.rulateday.platform.websocket.vo.shamrock.api.AccountInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +33,11 @@ public class WsServerEndpoint {
 
     public Session session;
 
+    //TODO: 增加BOT QQ号
+    private String userId;
+
+    private String nickname;
+
     public String getAuthorization() {
         return authorization;
     }
@@ -36,13 +46,37 @@ public class WsServerEndpoint {
         return session;
     }
 
+    public String getNickname() {
+        return nickname;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+
     /**
      * 连接成功
      */
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
+        this.userId = (String) config.getUserProperties().get("userId");
+        log.info("config userId ,{}" , userId);
+
         this.authorization = (String) config.getUserProperties().get("authorization");
         this.session = session;
+
+        ThreadPool.executorService.execute(() -> {
+            //验证账号ID
+            ShamrockService shamrockService = SpringContextUtil.getBean(ShamrockService.class);
+            AccountInfoVo accountInfoVo = shamrockService.getLoginInfo(this);
+            if (!Objects.equals(userId, accountInfoVo.getUser_id() + "")) {
+                throw new CommonBaseException(CommonBaseExceptionEnum.TOKEN_NOT_EXIST_ERR);
+            }
+            this.nickname = accountInfoVo.getNickname();
+            this.userId = accountInfoVo.getUser_id() + "";
+        });
+
         WsServerEndpoint.channelList.put(authorization, this);
         log.info("device link :" + authorization + ";device list size:" + channelList.size());
     }
@@ -61,11 +95,10 @@ public class WsServerEndpoint {
      */
     @OnMessage
     public void onMessage(String text) {
-        EventHandler eventHandler = SpringContextUtil.getBean(EventHandler.class);
-        InheritableThreadLocal<String> authorizationThreadLocal = new InheritableThreadLocal<>();
-        authorizationThreadLocal.set(authorization);
-        eventHandler.implement(authorization, text);
-        authorizationThreadLocal.remove();
+        ThreadPool.executorService.execute(() -> {
+            EventHandler eventHandler = SpringContextUtil.getBean(EventHandler.class);
+            eventHandler.implement(authorization, text);
+        });
     }
 
 

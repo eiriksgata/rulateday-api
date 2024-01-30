@@ -46,12 +46,11 @@ public class ChatRecordServiceImpl implements ChatRecordService {
 
             } else {
                 ChatRecordDTO chatRecordDTO = new ChatRecordDTO();
-                chatRecordDTO.setSenderId(chatRecordDTO.getSenderId());
+                chatRecordDTO.setSenderId(data.getSanderId());
                 String senderName = data.getMessageEvent().getSender().getCard();
-
                 chatRecordDTO.setSenderName(senderName);
                 chatRecordDTO.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-                chatRecordDTO.setContent(data.getMessageEvent().getMessage().toString());
+                chatRecordDTO.setContent(JSONObject.toJSONString(data.getMessageEvent().getMessage()));
                 GlobalData.groupChatRecordDataMap.get(data.getMessageEvent().getGroup_id() + "")
                         .getRecords().add(chatRecordDTO);
             }
@@ -59,25 +58,22 @@ public class ChatRecordServiceImpl implements ChatRecordService {
     }
 
     @Override
-    public void botSelfMessageRecord(DiceMessageDTO data) {
-        long groupId = data.getMessageEvent().getGroup_id();
+    public void botSelfMessageRecord(Long groupId, String nickname, Long selfId, String message) {
         Long startTime = GlobalData.groupChatRecordEnableMap.get(groupId + "");
         if (startTime != null) {
             ChatRecordDTO chatRecordDTO = new ChatRecordDTO();
-            chatRecordDTO.setSenderId(data.getMessageEvent().getSelf_id());
+            chatRecordDTO.setSenderId(selfId);
 
-            String senderName = "bot";
-
-            chatRecordDTO.setSenderName(senderName);
+            chatRecordDTO.setSenderName(nickname);
             chatRecordDTO.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-            chatRecordDTO.setContent(data.getMessageEvent().getMessage().toString());
+            chatRecordDTO.setContent(message);
             GlobalData.groupChatRecordDataMap.get(groupId + "").getRecords().add(chatRecordDTO);
         }
     }
 
     public File recordsFileCreate(String text) throws IOException {
         String fileName = "group-record-" + System.currentTimeMillis() + ".json";
-        String path = "resources/chat/record" + fileName;
+        String path = "resources/chat/record/" + fileName;
         File file = new File(path);
         file.createNewFile();
         CustomText.fileOut(file, text);

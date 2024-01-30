@@ -2,12 +2,19 @@ package com.github.eiriksgata.rulateday.platform;
 
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.LineCaptcha;
+import cn.hutool.http.HttpUtil;
+import com.github.eiriksgata.rulateday.platform.utils.FileUtil;
 import com.github.eiriksgata.rulateday.platform.utils.HexConvertUtil;
 import com.github.eiriksgata.trpg.dice.operation.impl.RollBasicsImpl;
 import com.github.eiriksgata.rulateday.platform.utils.RestUtil;
+import com.github.eiriksgata.trpg.dice.reply.CustomText;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.sql.Timestamp;
@@ -152,16 +159,23 @@ public class CollectionTest {
 
     @Test
     public void testMessageContent() {
-        Map<String,String> map = new HashMap<>();
-        map.put("authorization","Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcwMzc0Njk3NSwiaXNzIjoiYXBpLnJ1bGF0ZWRheWRpY2UudG9wIiwiZXhwIjoxOTIyMjg0ODAwLCJyb2xlcyI6WyJBRE1JTiJdfQ.NRVrE91D_50ogJmYZp8VhIA-TC92aLGpN64iWqIxe6PUZISYZ0d8mF-y6H8xd9LDhLFhC6crdrzqmVEQ-VRFYw");
+        Map<String, String> map = new HashMap<>();
+        map.put("authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcwMzc0Njk3NSwiaXNzIjoiYXBpLnJ1bGF0ZWRheWRpY2UudG9wIiwiZXhwIjoxOTIyMjg0ODAwLCJyb2xlcyI6WyJBRE1JTiJdfQ.NRVrE91D_50ogJmYZp8VhIA-TC92aLGpN64iWqIxe6PUZISYZ0d8mF-y6H8xd9LDhLFhC6crdrzqmVEQ-VRFYw");
 
-        String result =  RestUtil.get(
+        String result = RestUtil.get(
                 "http://10.30.30.30:24002/control-platform/server/api/v1/sub/platform/digital/community/query/personnel/interviewee/00450e66adf54db887dfc55447cc877a/12345678901",
                 map);
 
         System.out.println(result);
 
+    }
 
+    @Test
+    public void downloadImages() throws Exception {
+        String url = "https://cdn.seovx.com/d/?mom=302";
+       // String url = "https://api.r10086.com/樱道随机图片api接口.php?图片系列=动漫综合1";
+
+        FileUtil.downLoadFromUrl(url, "resources/images/" + UUID.randomUUID() + ".jpg");
 
     }
 }

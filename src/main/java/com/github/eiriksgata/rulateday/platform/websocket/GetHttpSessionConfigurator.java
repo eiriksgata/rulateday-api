@@ -2,6 +2,7 @@ package com.github.eiriksgata.rulateday.platform.websocket;
 
 import com.github.eiriksgata.rulateday.platform.exception.CommonBaseException;
 import com.github.eiriksgata.rulateday.platform.exception.CommonBaseExceptionEnum;
+import com.github.eiriksgata.rulateday.platform.pojo.RobotToken;
 import com.github.eiriksgata.rulateday.platform.service.RobotService;
 import com.github.eiriksgata.rulateday.platform.utils.SpringContextUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,9 @@ public class GetHttpSessionConfigurator extends Configurator {
             sec.getUserProperties().put("authorization", authorization);
             if (WsServerEndpoint.channelList.get(authorization) == null) {
                 RobotService robotService = SpringContextUtil.getBean(RobotService.class);
-                robotService.cryptoHeadersVerification(authorization);
+                RobotToken result = robotService.cryptoHeadersVerification(authorization);
+                sec.getUserProperties().put("userId", result.getMachineCode());
+
             } else {
                 try {
                     WsServerEndpoint.channelList.get(authorization).session.close();

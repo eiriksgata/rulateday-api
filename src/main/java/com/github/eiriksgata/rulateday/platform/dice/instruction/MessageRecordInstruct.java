@@ -1,5 +1,6 @@
 package com.github.eiriksgata.rulateday.platform.dice.instruction;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.eiriksgata.rulateday.platform.dice.config.GlobalData;
 import com.github.eiriksgata.rulateday.platform.dice.dto.ChatRecordDTO;
 import com.github.eiriksgata.rulateday.platform.dice.dto.DiceMessageDTO;
@@ -45,7 +46,7 @@ public class MessageRecordInstruct {
                 chatRecordDTO.setSenderName(senderName);
                 chatRecordDTO.setSenderId(data.getSanderId());
                 chatRecordDTO.setDate(currentDate);
-                chatRecordDTO.setContent(data.getMessageEvent().getMessage().toString());
+                chatRecordDTO.setContent(JSONObject.toJSONString(data.getMessageEvent().getMessage()));
 
                 temp.getRecords().add(chatRecordDTO);
 

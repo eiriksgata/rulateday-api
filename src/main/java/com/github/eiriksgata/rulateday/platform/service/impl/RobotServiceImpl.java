@@ -56,7 +56,7 @@ public class RobotServiceImpl implements RobotService {
     }
 
     @Override
-    public void cryptoHeadersVerification(String authorization) {
+    public RobotToken cryptoHeadersVerification(String authorization) {
         log.info("auth: {}", authorization);
         RobotToken result = robotTokenMapper.selectByName(authorization);
         if (result == null) {
@@ -64,11 +64,10 @@ public class RobotServiceImpl implements RobotService {
         }
         long temp = System.currentTimeMillis();
         if (temp <= result.getExpirationAt().getTime()) {
-            return;
+            return result;
         }
 
         throw new CommonBaseException(CommonBaseExceptionEnum.TOKEN_NOT_EXIST_ERR);
-
     }
 
 

@@ -64,15 +64,15 @@ public class FileUtil {
      * @return
      * @throws IOException
      */
-    public static byte[] readInputStream(InputStream inputStream) throws IOException {
+    private static byte[] readInputStream(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
-        int len = 0;
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        int len;
         while ((len = inputStream.read(buffer)) != -1) {
-            bos.write(buffer, 0, len);
+            outStream.write(buffer, 0, len);
         }
-        bos.close();
-        return bos.toByteArray();
+        inputStream.close();
+        return outStream.toByteArray();
     }
 
 
