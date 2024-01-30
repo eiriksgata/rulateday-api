@@ -42,10 +42,10 @@ jobs:
           docker buildx build --file Dockerfile --tag rulateday-api-server-uat:latest .
 
       - name: create ghcr tag
-        run: docker image tag rulateday-api-server-uat:latest ghcr.io/rulateday/rulateday-api-server-uat:latest
+        run: docker image tag rulateday-api-server-uat:latest ghcr.io/eiriksgata/rulateday-api-server-uat:latest
       
       - name: ghcr.io push image
-        run: docker push ghcr.io/rulateday/rulateday-api-server-uat:latest
+        run: docker push ghcr.io/eiriksgata/rulateday-api-server-uat:latest
         
       - name: create tencent docker hub tag
         run: docker image tag rulateday-api-server-uat:latest ${{ secrets.TC_DOCKER_HUB_ADDRESS }}/rulateday/rulateday-api-server-uat:latest
