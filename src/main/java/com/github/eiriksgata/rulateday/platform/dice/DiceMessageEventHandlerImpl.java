@@ -56,7 +56,7 @@ public class DiceMessageEventHandlerImpl implements DiceMessageEventHandler {
 
         //收到邀请自动加入
         if (GlobalData.configData.getBooleanValue("auto.accept.group.request")) {
-            //TODO: 同意请求
+            //TODO: 同意请求 不需要实现，用户可以通过模拟器自主实现
             //  event.accept();
         }
 
@@ -66,7 +66,7 @@ public class DiceMessageEventHandlerImpl implements DiceMessageEventHandler {
     public void onFriendRequest(DiceMessageDTO diceMessageDTO) {
         if (GlobalData.configData.getBooleanValue("auto.accept.friend.request")
                 && !botControl.isBlacklist(-diceMessageDTO.getSanderId())) {
-            //TODO: 同意请求
+            //TODO: 不需要实现，用户可以通过模拟器自主实现
             //  event.accept();
         }
     }

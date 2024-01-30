@@ -19,4 +19,5 @@ public interface RobotService {
     RobotToken cryptoHeadersVerification(String authorization);
 
 
+    RobotToken userOpenRegister(String machineCode, String masterCode);
 }

@@ -37,3 +37,7 @@ pagehelper:
   reasonable: true
   supportMethodsArguments: true
   params: count=countSql
+
+robot:
+  open:
+    register: true

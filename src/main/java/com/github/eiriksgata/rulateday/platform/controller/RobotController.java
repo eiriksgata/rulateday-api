@@ -1,5 +1,6 @@
 package com.github.eiriksgata.rulateday.platform.controller;
 
+import com.github.eiriksgata.rulateday.platform.misc.IgnoreAuthentication;
 import com.github.eiriksgata.rulateday.platform.pojo.RobotToken;
 import com.github.eiriksgata.rulateday.platform.service.RobotService;
 import com.github.eiriksgata.rulateday.platform.vo.ResponseBean;
@@ -31,4 +32,14 @@ public class RobotController {
     public ResponseBean<?> getRobotList() {
         return ResponseBean.success(robotService.getRobots());
     }
+
+    @IgnoreAuthentication
+    @PutMapping("/robot/open/register")
+    public ResponseBean<?> robotOpenRegister(@RequestBody RobotToken robotToken) {
+        return ResponseBean.success(
+                robotService.userOpenRegister(robotToken.getMachineCode(), robotToken.getDescription())
+        );
+    }
+
+
 }

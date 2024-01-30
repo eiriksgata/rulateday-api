@@ -184,13 +184,13 @@ public class BotInstruct {
     public String dismissCurrentGroup(DiceMessageDTO data) {
         // String number = GlobalData.configData.getString("master.QQ.number");
         if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.NORMAL.getName())) {
-            shamrockService.quitGroup(data.getMessageEvent().getGroup_id(), data.getWsServerEndpoint());
             shamrockService.sendGroupMessage(
                     data.getSanderId(),
                     data.getMessageEvent().getGroup_id(),
                     CustomText.getText("bot.group.dismiss"),
                     data.getWsServerEndpoint()
             );
+            shamrockService.quitGroup(data.getMessageEvent().getGroup_id(), data.getWsServerEndpoint());
         }
         return null;
     }
@@ -208,20 +208,22 @@ public class BotInstruct {
             return CustomText.getText("bot.group.quit.id.error");
         }
         if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
-            shamrockService.quitGroup(groupId, data.getWsServerEndpoint());
             shamrockService.sendPrivateMessage(
                     data.getSanderId(),
                     CustomText.getText("bot.group.quit.success", groupId),
                     data.getWsServerEndpoint()
+
             );
-        } else {
             shamrockService.quitGroup(groupId, data.getWsServerEndpoint());
+
+        } else {
             shamrockService.sendGroupMessage(
                     data.getSanderId(),
                     data.getMessageEvent().getGroup_id(),
                     CustomText.getText("bot.group.quit.success", groupId),
                     data.getWsServerEndpoint()
             );
+            shamrockService.quitGroup(groupId, data.getWsServerEndpoint());
         }
         return null;
     }
