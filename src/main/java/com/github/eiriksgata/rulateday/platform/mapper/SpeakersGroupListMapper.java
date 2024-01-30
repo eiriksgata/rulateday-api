@@ -1,7 +1,6 @@
 package com.github.eiriksgata.rulateday.platform.mapper;
 
 import org.apache.ibatis.annotations.*;
-import org.springframework.stereotype.Repository;
 
 /**
  * author: create by Keith
@@ -9,19 +8,24 @@ import org.springframework.stereotype.Repository;
  * description: com.github.eiriksgata.rulateday.mapper
  * date: 2020/11/13
  **/
-
 @Mapper
-@Repository
 public interface SpeakersGroupListMapper {
 
     @Select("select is_enable from speakers_group_list where id = #{id} ")
     Boolean selectByGroupId(@Param("id") long groupId);
 
-    @Insert("insert into speakers_group_list (id,is_enable) values (#{id},#{isEnable})")
-    void insert(@Param("id") long id, @Param("isEnable") boolean isEnable);
+    @Select("select is_blacklist from speakers_group_list where id = #{id}")
+    Boolean selectBlacklistByGroupId(@Param("id") long groupId);
+
+    @Insert("insert into speakers_group_list (id,is_enable,is_blacklist) values (#{id},#{isEnable},#{isBlacklist})")
+    void insert(@Param("id") long id, @Param("isEnable") boolean isEnable, @Param("isBlacklist") boolean isBlacklist);
 
     @Update("update speakers_group_list set is_enable=#{isEnable} where id=#{id}")
     void updateIsEnableById(@Param("id") long id, @Param("isEnable") boolean isEnable);
+
+    @Update("update speakers_group_list set is_blacklist=#{isBlacklist} where id=#{id}")
+    void updateIsBlacklistById(@Param("id") long id, @Param("isBlacklist") boolean isBlacklist);
+
 
     @Update("create table speakers_group_list\n" +
             "(\n" +

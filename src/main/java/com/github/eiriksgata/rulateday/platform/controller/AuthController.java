@@ -9,12 +9,12 @@ import com.github.eiriksgata.rulateday.platform.exception.CommonBaseExceptionEnu
 import com.github.eiriksgata.rulateday.platform.misc.IgnoreAuthentication;
 import com.github.eiriksgata.rulateday.platform.provider.JwtProvider;
 import com.github.eiriksgata.rulateday.platform.service.AuthService;
-import com.github.eiriksgata.rulateday.platform.service.RobotTokenService;
-import com.github.eiriksgata.rulateday.platform.pojo.RobotToken;
+import com.github.eiriksgata.rulateday.platform.service.RobotService;
 import com.github.eiriksgata.rulateday.platform.utils.VerifyImageUtil;
 import com.github.eiriksgata.rulateday.platform.vo.AccessToken;
 import com.github.eiriksgata.rulateday.platform.vo.ResponseBean;
 import com.github.eiriksgata.rulateday.platform.vo.SliderCaptchaVerifyVo;
+import com.github.eiriksgata.rulateday.platform.vo.UserPasswordResetVo;
 import com.github.eiriksgata.rulateday.platform.vo.openapi.GenCaptchaVo;
 import io.swagger.annotations.Api;
 import org.jetbrains.annotations.NotNull;
@@ -34,9 +34,6 @@ public class AuthController {
     AuthService authService;
 
     @Autowired
-    RobotTokenService robotTokenService;
-
-    @Autowired
     CaptchaCache captchaCache;
 
     @Autowired
@@ -44,6 +41,9 @@ public class AuthController {
 
     @Autowired
     JwtProvider jwtProvider;
+
+    @Autowired
+    RobotService robotService;
 
     @PutMapping("/authentication/captcha/slider")
     @IgnoreAuthentication
@@ -69,6 +69,7 @@ public class AuthController {
 
     @GetMapping("/logout")
     public ResponseBean<?> logout() {
+        authService.logout();
         return ResponseBean.success();
     }
 
@@ -120,22 +121,10 @@ public class AuthController {
         }
     }
 
-    @PutMapping("/robot/token")
-    public ResponseBean<?> robotTokenGen(@RequestBody RobotToken robotToken) {
-        robotTokenService.saveRobotToken(robotToken.getMachineCode(), robotToken.getExpirationAt(), robotToken.getDescription());
+    @PutMapping("/user/password/reset")
+    public ResponseBean<?> accessPasswordReset(@RequestBody UserPasswordResetVo passwordResetVo) {
+        authService.userPasswordReset(passwordResetVo);
         return ResponseBean.success();
     }
-
-    @DeleteMapping("/robot/token/delete")
-    public ResponseBean<?> robotTokenDelete(@RequestBody RobotToken robotToken) {
-        robotTokenService.deleteRobotToken(robotToken.getId());
-        return ResponseBean.success();
-    }
-
-    @GetMapping("/robot/token/list")
-    public ResponseBean<?> getRobotTokenList() {
-        return ResponseBean.success(robotTokenService.selectAllRobotToken());
-    }
-
 
 }

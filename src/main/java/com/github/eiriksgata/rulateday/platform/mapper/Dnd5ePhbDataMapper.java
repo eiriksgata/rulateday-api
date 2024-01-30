@@ -1,10 +1,9 @@
 package com.github.eiriksgata.rulateday.platform.mapper;
 
 import com.github.eiriksgata.rulateday.platform.pojo.QueryDataBase;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -16,7 +15,6 @@ import java.util.List;
  **/
 
 @Mapper
-@Repository
 public interface Dnd5ePhbDataMapper {
 
     @Select("select * from dnd5e_skill_phb")
@@ -114,4 +112,9 @@ public interface Dnd5ePhbDataMapper {
     @Select("select * from dnd5e_creature_phb_dmg")
     List<QueryDataBase> selectAllCreaturePhbDmg();
 
+    @Select("select * from dnd5e_egtw where name like #{name}")
+    List<QueryDataBase> selectEgtw(@Param("name") String name);
+
+    @Select("select * from dnd5e_base_module where name like #{name}")
+    List<QueryDataBase> selectBaseModule(@Param("name") String name);
 }

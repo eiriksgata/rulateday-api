@@ -1,40 +1,84 @@
 package com.github.eiriksgata.rulateday.platform.websocket;
 
-import com.alibaba.fastjson.JSONObject;
+import cn.hutool.core.thread.ThreadUtil;
 import com.github.eiriksgata.rulateday.platform.exception.CommonBaseException;
 import com.github.eiriksgata.rulateday.platform.exception.CommonBaseExceptionEnum;
 import com.github.eiriksgata.rulateday.platform.utils.SpringContextUtil;
-import com.github.eiriksgata.rulateday.platform.websocket.vo.WsDataBean;
+import com.github.eiriksgata.rulateday.platform.utils.ThreadPool;
+import com.github.eiriksgata.rulateday.platform.websocket.api.ShamrockService;
+import com.github.eiriksgata.rulateday.platform.websocket.vo.shamrock.api.AccountInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 
+@ServerEndpoint(value = "/ws/open-shamrock", configurator = GetHttpSessionConfigurator.class)
 @Component
-@ServerEndpoint(value = "/push-channel", configurator = GetHttpSessionConfigurator.class)
 @Slf4j
 public class WsServerEndpoint {
 
-    public static ConcurrentHashMap<String, WsServerEndpoint> channelList = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, WsServerEndpoint> channelList = new ConcurrentHashMap<>();
 
-    private String userId;
+    public static final ConcurrentHashMap<String, CompletableFuture<String>> responseFutures = new ConcurrentHashMap<>();
+
+    private String authorization;
 
     public Session session;
+
+    //TODO: 增加BOT QQ号
+    private String userId;
+
+    private String nickname;
+
+    public String getAuthorization() {
+        return authorization;
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
 
     /**
      * 连接成功
      */
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
-        session.setMaxIdleTimeout(1000 * 60);
-        userId = (String) config.getUserProperties().get("userId");
-        channelList.put(userId, this);
+        this.userId = (String) config.getUserProperties().get("userId");
+        log.info("config userId ,{}" , userId);
+
+        this.authorization = (String) config.getUserProperties().get("authorization");
         this.session = session;
-        log.info("device link :" + userId + ";device list size:" + channelList.size());
+
+        ThreadPool.executorService.execute(() -> {
+            //验证账号ID
+            ShamrockService shamrockService = SpringContextUtil.getBean(ShamrockService.class);
+            AccountInfoVo accountInfoVo = shamrockService.getLoginInfo(this);
+            if (!Objects.equals(userId, accountInfoVo.getUser_id() + "")) {
+                throw new CommonBaseException(CommonBaseExceptionEnum.TOKEN_NOT_EXIST_ERR);
+            }
+            this.nickname = accountInfoVo.getNickname();
+            this.userId = accountInfoVo.getUser_id() + "";
+        });
+
+        WsServerEndpoint.channelList.put(authorization, this);
+        log.info("device link :" + authorization + ";device list size:" + channelList.size());
     }
 
     /**
@@ -42,8 +86,8 @@ public class WsServerEndpoint {
      */
     @OnClose
     public void onClose(Session session) {
-        channelList.remove(userId);
-        log.info("连接关闭:" + userId + ";device list size:" + channelList.size());
+        channelList.remove(authorization);
+        log.info("连接关闭:" + authorization + ";device list size:" + channelList.size());
     }
 
     /**
@@ -51,12 +95,31 @@ public class WsServerEndpoint {
      */
     @OnMessage
     public void onMessage(String text) {
-        EventHandler eventHandler = SpringContextUtil.getBean(EventHandler.class);
-        eventHandler.implement(userId, text);
-
+        ThreadPool.executorService.execute(() -> {
+            EventHandler eventHandler = SpringContextUtil.getBean(EventHandler.class);
+            eventHandler.implement(authorization, text);
+        });
     }
 
+
+    @OnError
+    public void onError(Session session, Throwable throwable) {
+        throwable.printStackTrace();
+        log.error("userId:{},link error:{}", authorization, throwable);
+    }
+
+
     public void sendMessage(String message) {
+        try {
+            session.getBasicRemote().sendText(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error(e.toString());
+            throw new CommonBaseException(CommonBaseExceptionEnum.ERROR);
+        }
+    }
+
+    public String sendSyncMessage(String taskId, String message) {
         try {
             this.session.getBasicRemote().sendText(message);
         } catch (IOException e) {
@@ -64,22 +127,20 @@ public class WsServerEndpoint {
             log.error(e.toString());
             throw new CommonBaseException(CommonBaseExceptionEnum.ERROR);
         }
-    }
+        CompletableFuture<String> responseFuture = new CompletableFuture<>();
 
-    public void sendMessage(WsDataBean<?> message) {
+        // 将 CompletableFuture 存储起来，以便在响应到达时完成异步操作
+        responseFutures.put(taskId, responseFuture);
+
+        // 等待响应，最多等待10秒（可以根据实际情况调整）
         try {
-            this.session.getBasicRemote().sendText(JSONObject.toJSONString(message));
-        } catch (IOException e) {
+            AtomicReference<String> result = new AtomicReference<>();
+            responseFuture.thenAccept(result::set).get(10, TimeUnit.SECONDS);
+            return result.get();
+        } catch (Exception e) {
+            responseFutures.remove(taskId);
             e.printStackTrace();
-            log.error(e.toString());
-            throw new CommonBaseException(CommonBaseExceptionEnum.ERROR);
+            throw new CommonBaseException(CommonBaseExceptionEnum.WS_RESPONSE_TIMEOUT_ERROR);
         }
     }
-
-    @OnError
-    public void onError(Session session, Throwable throwable) {
-        throwable.printStackTrace();
-        log.error("userId:{},link error:{}", userId, throwable);
-    }
-
 }

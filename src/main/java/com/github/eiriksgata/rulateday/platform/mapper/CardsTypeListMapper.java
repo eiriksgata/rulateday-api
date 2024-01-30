@@ -1,20 +1,12 @@
 package com.github.eiriksgata.rulateday.platform.mapper;
 
+
 import com.github.eiriksgata.rulateday.platform.pojo.CardsTypeList;
 import org.apache.ibatis.annotations.*;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-/**
- * author: create by Keith
- * version: v1.0
- * description: com.github.eiriksgata.rulateday.mapper
- * date: 2021/4/19
- **/
-
 @Mapper
-@Repository
 public interface CardsTypeListMapper {
 
     @Insert("insert into cards_type_list (id,name,content) values (#{id},#{name},#{content})")

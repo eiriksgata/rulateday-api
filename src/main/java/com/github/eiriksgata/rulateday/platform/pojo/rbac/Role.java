@@ -17,6 +17,7 @@ public class Role {
      * 主键
      */
     @TableId(value = "id", type = IdType.AUTO)
+//    @JSONField(value = true, name = "id", serializeUsing = ToStringSerializer.class)
     private Long id;
 
     /**

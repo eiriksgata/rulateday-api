@@ -1,27 +1,21 @@
 package com.github.eiriksgata.rulateday.platform.provider;
 
 import cn.hutool.core.date.DateUtil;
-import com.github.eiriksgata.rulateday.platform.entity.UserDetail;
 import com.github.eiriksgata.rulateday.platform.jwt.JwtProperties;
 import com.github.eiriksgata.rulateday.platform.vo.AccessToken;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import io.jsonwebtoken.Claims;
 
-
-import java.security.Key;
-import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 @Slf4j
 @Component
@@ -46,13 +40,15 @@ public class JwtProvider {
 
         // 过期时间
         Date expireDate = new Date(nowDate.getTime() + jwtProperties.getExpire() * 1000);
+        return generateToken(subject, roles, nowDate, expireDate);
+    }
 
+    public AccessToken generateToken(String subject, List<String> roles, Date issuedAt, Date expireDate) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", roles);
-
         String token = jwtProperties.getPrefix() + Jwts.builder()
                 .setSubject(subject)
-                .setIssuedAt(nowDate)
+                .setIssuedAt(issuedAt)
                 .setIssuer(jwtProperties.getIssuer())
                 .setExpiration(expireDate)
                 .addClaims(claims)
@@ -65,6 +61,7 @@ public class JwtProvider {
                 .token(token)
                 .expirationTime(expireDate).build();
     }
+
 
     /**
      * 验证token是否还有效

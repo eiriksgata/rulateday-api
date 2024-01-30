@@ -23,12 +23,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     RoleService roleService;
 
     @Override
-    public UserDetail loadUserByUsername(String s) throws UsernameNotFoundException {
-        log.info("开始登陆验证，用户名为: {}", s);
+    public UserDetail loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.info("开始登陆验证，用户名为: {}", username);
 
         // 根据用户名验证用户
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(User::getName, s);
+        queryWrapper.lambda().eq(User::getName, username);
         User userInfo = userService.getOne(queryWrapper);
         if (userInfo == null) {
             throw new UsernameNotFoundException("用户名不存在，登陆失败。");

@@ -1,8 +1,8 @@
 package com.github.eiriksgata.rulateday.platform.mapper;
 
+
 import com.github.eiriksgata.rulateday.platform.pojo.CardsGroupData;
 import org.apache.ibatis.annotations.*;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -12,9 +12,7 @@ import java.util.List;
  * description: com.github.eiriksgata.rulateday.mapper
  * date: 2021/4/19
  **/
-
 @Mapper
-@Repository
 public interface CardsGroupDataMapper {
 
     @Insert("insert into cards_group_data (id,group_id,type_id,value) values (#{id},#{groupId},#{typeId},#{value})")

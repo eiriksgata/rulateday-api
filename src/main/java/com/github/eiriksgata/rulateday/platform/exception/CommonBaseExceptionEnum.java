@@ -5,16 +5,24 @@ import lombok.Getter;
 @Getter
 public enum CommonBaseExceptionEnum {
 
-    //login
     ACCOUNTS_AUTHENTICATION_ERROR(10801, "账号密码错误"),
 
+    ACCOUNTS_USERNAME_LENGTH_ERROR(11310, "账号名过短"),
+
+    ACCOUNTS_USERNAME_EXIST_ERROR(11311, "账号已存在"),
+    ACCOUNTS_USERNAME_NOT_EXIST_ERROR(11312, "账号不存在"),
     ACCOUNTS_CAPTCHA_CODE_ERROR(10802, "验证码不正确"),
 
     TOKEN_NOT_EXIST_ERR(10002, "凭证验证无法通过，请重新登陆"),
 
 
     TOKEN_NOT_ACCESS_ERR(120001, "无访问权限"),
+
+    WS_RESPONSE_TIMEOUT_ERROR(130001, "websocket 同步返回消息超时"),
+
+
     //Game event enum
+
     GAME_EVENT_NODE_DELETE_ERROR(10230, "删除节点失败，因为目前节点有下属节点，请先删除下属节点后再删除本节点"),
 
     DICE_EXCEPTION_COMMIT_ERROR(10010, "骰子异常数据提交失败"),

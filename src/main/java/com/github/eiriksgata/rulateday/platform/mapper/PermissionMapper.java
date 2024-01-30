@@ -2,7 +2,9 @@ package com.github.eiriksgata.rulateday.platform.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.eiriksgata.rulateday.platform.pojo.rbac.Permission;
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
