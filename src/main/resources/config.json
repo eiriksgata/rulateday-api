@@ -1,5 +1,5 @@
 {
-  "file.version": "1.0.6",
+  "file.version": "1.0.8",
   "master.QQ.number": "",
   "auto.accept.friend.request": true,
   "auto.accept.group.request": true,
@@ -9,6 +9,7 @@
     "remote": true,
     "userId": ""
   },
+  "server-address": "http://localhost:8089",
   "instructions.prefix.list": [
     ".",
     "。"

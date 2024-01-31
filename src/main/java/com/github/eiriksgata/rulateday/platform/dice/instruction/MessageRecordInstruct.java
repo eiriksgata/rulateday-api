@@ -87,7 +87,7 @@ public class MessageRecordInstruct {
             //TODO：上传文件API
             String fileName = chatRecordService.recordFileUpload(data.getMessageEvent().getGroup_id());
 
-            String resultText = CustomText.getText("chat.record.close") + "\n" + "http://localhost:12030/server/resources/chat/record/" + fileName;
+            String resultText = CustomText.getText("chat.record.close") + "\n" + GlobalData.configData.getString("server-address") +"/resources/chat/record/" + fileName;
             shamrockService.sendGroupMessage(data.getSanderId(), data.getMessageEvent().getGroup_id(), resultText, data.getWsServerEndpoint());
             GlobalData.groupChatRecordEnableMap.remove(data.getMessageEvent().getGroup_id() + "");
             GlobalData.groupChatRecordDataMap.remove(data.getMessageEvent().getGroup_id() + "");

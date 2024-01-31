@@ -41,3 +41,6 @@ pagehelper:
 robot:
   open:
     register: true
+
+resource:
+  path:

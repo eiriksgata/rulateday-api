@@ -16,7 +16,7 @@ public class WebPathConfig implements WebMvcConfigurer {
     /*
      * 文件默认存储位置
      */
-    public static String DEFAULT_FILE_PATH = System.getProperty("user.dir") + "/resources";
+    public static String DEFAULT_FILE_PATH = "resources";
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

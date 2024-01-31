@@ -1,5 +1,6 @@
 package com.github.eiriksgata.rulateday.platform.dice.service.impl;
 
+import com.github.eiriksgata.rulateday.platform.dice.config.GlobalData;
 import com.github.eiriksgata.rulateday.platform.dice.dto.DiceMessageDTO;
 import com.github.eiriksgata.rulateday.platform.dice.service.RandomPictureApiService;
 import com.github.eiriksgata.rulateday.platform.utils.FileUtil;
@@ -24,9 +25,11 @@ public class RandomPictureApiServiceImpl implements RandomPictureApiService {
     public String urlEncodeAPI(DiceMessageDTO data, String url) {
         List<MessageContent> messageContentList = new ArrayList<>();
         String fileName = UUID.randomUUID() + ".jpg";
+
+        String address = GlobalData.configData.getString("server-address");
         try {
             FileUtil.downLoadFromUrl(url, "resources/images/" + fileName);
-            String serverUrl = "http://10.0.2.2:16467/resources/images/" + fileName;
+            String serverUrl = address + "/resources/images/" + fileName;
             messageContentList.add(new MessageContent().setTypeByImages(serverUrl));
 
             if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {

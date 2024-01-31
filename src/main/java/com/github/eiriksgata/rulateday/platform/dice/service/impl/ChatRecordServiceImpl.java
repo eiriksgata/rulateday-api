@@ -35,7 +35,7 @@ public class ChatRecordServiceImpl implements ChatRecordService {
 
                 String filename = recordFileUpload(data.getMessageEvent().getGroup_id());
                 String resultText = CustomText.getText("chat.record.close") + "\n" +
-                        "http://localhost:12030/server/resources/chat/record/" + filename;
+                        GlobalData.configData.getString("server-address") + "/resources/chat/record/" + filename;
                 shamrockService.sendGroupMessage(
                         data.getSanderId(),
                         data.getMessageEvent().getGroup_id(),
