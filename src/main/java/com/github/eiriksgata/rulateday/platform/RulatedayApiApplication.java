@@ -10,10 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @MapperScan(basePackages = {"com.github.eiriksgata.rulateday.platform.mapper"})
 @ComponentScan(basePackages = {
-        "com.github.eiriksgata.rulateday.platform",
-        "com.github.eiriksgata.rulateday.platform.dice",
-        "com.github.eiriksgata.rulateday.platform.dice.service",
-        "com.github.eiriksgata.rulateday.platform.dice.instruction",
+        "com.github.eiriksgata.rulateday.platform"
 })
 public class RulatedayApiApplication {
 
