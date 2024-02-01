@@ -1,5 +1,6 @@
 package com.github.eiriksgata.rulateday.platform.dice;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.eiriksgata.rulateday.platform.dice.config.GlobalData;
 import com.github.eiriksgata.rulateday.platform.dice.dto.DiceMessageDTO;
 import com.github.eiriksgata.rulateday.platform.dice.service.ApiReportService;
@@ -7,12 +8,14 @@ import com.github.eiriksgata.rulateday.platform.dice.service.BotControlService;
 import com.github.eiriksgata.rulateday.platform.dice.service.ChatRecordService;
 import com.github.eiriksgata.rulateday.platform.dice.service.UserConversationService;
 import com.github.eiriksgata.rulateday.platform.mapper.DiceConfigMapper;
+import com.github.eiriksgata.rulateday.platform.pojo.DiceConfigEntity;
 import com.github.eiriksgata.rulateday.platform.utils.ExceptionUtils;
 import com.github.eiriksgata.rulateday.platform.websocket.api.ShamrockService;
 import com.github.eiriksgata.rulateday.platform.websocket.vo.shamrock.EventEnum;
 import com.github.eiriksgata.trpg.dice.exception.DiceInstructException;
 import com.github.eiriksgata.trpg.dice.exception.ExceptionEnum;
 import com.github.eiriksgata.trpg.dice.message.handle.InstructHandle;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
+@Slf4j
 public class DiceMessageEventHandlerImpl implements DiceMessageEventHandler {
 
     @Autowired
@@ -74,7 +78,8 @@ public class DiceMessageEventHandlerImpl implements DiceMessageEventHandler {
     @Override
     public void OnDiceMessage(DiceMessageDTO data) {
 
-        if (Objects.equals(data.getMessageEvent().getSub_type(), EventEnum.MessageSubType.FRIEND.getName())) {
+        if (Objects.equals(data.getMessageEvent().getSub_type(), EventEnum.MessageSubType.FRIEND.getName()) ||
+                Objects.equals(data.getMessageEvent().getSub_type(), EventEnum.MessageSubType.GROUP.getName())) {
             onFriendMessage(data);
         }
 
@@ -89,8 +94,10 @@ public class DiceMessageEventHandlerImpl implements DiceMessageEventHandler {
         groupMessageHandle(event);
     }
 
+    @Override
     public void onFriendMessage(DiceMessageDTO data) {
-        if (diceConfigMapper.selectById().getPrivate_chat() == 0) {
+        JSONObject diceConfigEntity = diceConfigMapper.selectOne();
+        if (diceConfigEntity.getInteger("private_chat") == 0) {
             return;
         }
 
@@ -113,10 +120,10 @@ public class DiceMessageEventHandlerImpl implements DiceMessageEventHandler {
         if (result != null) {
             result.forEach((text) ->
                     shamrockService.sendPrivateMessage(
-                            data.getSanderId(), text,
+                            data.getSanderId(),
+                            text,
                             data.getWsServerEndpoint()));
         }
-
     }
 
     //处理在处理事件中发生的未捕获异常
@@ -219,7 +226,6 @@ public class DiceMessageEventHandlerImpl implements DiceMessageEventHandler {
         }
 
         data.setBody(data.getBody().substring(prefix.length()));
-        data.setBody(data.getBody().toUpperCase());
 
         try {
             String returnText = (String) instructHandle.instructCheck(data);

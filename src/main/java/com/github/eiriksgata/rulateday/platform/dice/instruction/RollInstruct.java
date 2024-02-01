@@ -120,7 +120,7 @@ public class RollInstruct {
         for (int i = 0; i < repeatedlyValue; i++) {
             if (data.getBody().equals("") || data.getBody().equals(" ") ||
                     data.getBody().equals("d") || data.getBody().equals("D")) {
-                resultText.append("\n").append(rollBasics.rollRandom("d", data.getSanderId()));
+                resultText.append(rollBasics.rollRandom("d", data.getSanderId()));
             } else {
                 //正则筛选
                 String result = RegularExpressionUtils.getMatcher("(([0-9]{0,2}[dD]?[0-9]{0,5}[\\+\\-\\*\\/][0-9]{0,2}[dD]?[0-9]{0,5})+|[0-9]{0,2}[dD]?[0-9]{1,5})", data.getBody());
@@ -128,7 +128,7 @@ public class RollInstruct {
                     if (result.endsWith("+") || result.endsWith("-") || result.endsWith("*") || result.endsWith("/")) {
                         result = result.substring(0, result.length() - 1);
                     }
-                    resultText.append("\n").append(rollBasics.rollRandom(result, data.getSanderId()));
+                    resultText.append(rollBasics.rollRandom(result, data.getSanderId()));
                 } else {
                     return CustomText.getText("dice.base.parameter.error");
                 }
@@ -212,7 +212,7 @@ public class RollInstruct {
 
     @InstructReflex(value = {"rh"}, priority = 3)
     public String rollHide(DiceMessageDTO data) {
-        if (diceConfigMapper.selectById().getPrivate_chat() == 0) {
+        if (diceConfigMapper.selectOne().getInteger("private_chat") == 0) {
             return CustomText.getText("dice.roll.hide.private.chat.disable");
         }
         shamrockService.sendPrivateMessage(
@@ -432,16 +432,17 @@ public class RollInstruct {
         returnText.append("b").append(count);
         for (int i = 1; i < repeat; i++) {
             rollBasics.dicePoolCount(diceNumber, resultText, count, addDiceCheck, count, diceFace, successDiceCheck);
-            if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
-                shamrockService.sendPrivateMessage(
-                        data.getSanderId(),
-                        CustomText.getText("dice.pool.result", returnText, resultText), data.getWsServerEndpoint());
-            } else {
+            if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.NORMAL.getName())) {
                 shamrockService.sendGroupMessage(
                         data.getSanderId(),
                         data.getMessageEvent().getGroup_id(),
                         "[" + data.getMessageEvent().getSender().getNickname() + "]" +
                                 CustomText.getText("dice.pool.result", returnText, resultText), data.getWsServerEndpoint());
+            } else {
+                shamrockService.sendPrivateMessage(
+                        data.getSanderId(),
+                        CustomText.getText("dice.pool.result", returnText, resultText), data.getWsServerEndpoint());
+
             }
             resultText.delete(0, resultText.length());
         }

@@ -32,16 +32,16 @@ public class RandomPictureApiServiceImpl implements RandomPictureApiService {
             String serverUrl = address + "/resources/images/" + fileName;
             messageContentList.add(new MessageContent().setTypeByImages(serverUrl));
 
-            if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
-                shamrockService.sendPrivateMessage(
+            if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.NORMAL.getName())) {
+                shamrockService.sendGroupMessage(
                         data.getSanderId(),
+                        data.getMessageEvent().getGroup_id(),
                         messageContentList,
                         data.getWsServerEndpoint()
                 );
             } else {
-                shamrockService.sendGroupMessage(
+                shamrockService.sendPrivateMessage(
                         data.getSanderId(),
-                        data.getMessageEvent().getGroup_id(),
                         messageContentList,
                         data.getWsServerEndpoint()
                 );

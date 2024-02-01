@@ -78,19 +78,20 @@ public class Dnd5eLibServiceImpl implements Dnd5eLibService {
         String url = imagesUrl + mmNameFileName;
         List<MessageContent> messageContentList = new ArrayList<>();
         messageContentList.add(new MessageContent().setTypeByImages(url));
-        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
-            shamrockService.sendPrivateMessage(
-                    data.getSanderId(),
-                    messageContentList,
-                    data.getWsServerEndpoint()
-            );
-        } else {
+        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.NORMAL.getName())) {
             shamrockService.sendGroupMessage(
                     data.getSanderId(),
                     data.getMessageEvent().getGroup_id(),
                     messageContentList,
                     data.getWsServerEndpoint()
             );
+        } else {
+            shamrockService.sendPrivateMessage(
+                    data.getSanderId(),
+                    messageContentList,
+                    data.getWsServerEndpoint()
+            );
+
         }
     }
 

@@ -16,6 +16,8 @@ public interface DiceMessageEventHandler {
     //需要考虑并发安全
     void onGroupMessage(DiceMessageDTO event);
 
+    void onFriendMessage(DiceMessageDTO data);
+
     //处理在处理事件中发生的未捕获异常
     void handleException(@NotNull Throwable exception);
 }

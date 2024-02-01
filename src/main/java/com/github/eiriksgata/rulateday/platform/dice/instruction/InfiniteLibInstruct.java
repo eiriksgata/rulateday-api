@@ -29,7 +29,8 @@ public class InfiniteLibInstruct {
 
     @InstructReflex(value = {"ir2"})
     public String infiniteLibOnlineQuery(DiceMessageDTO data) {
-        if (diceConfigMapper.selectById().getBeta_version() == 0) {
+
+        if (diceConfigMapper.selectOne().getInteger("beta_version") == 0) {
             return CustomText.getText("infinite.lib.ir2.no.enable");
         }
         //如果输入的数据是无关键字的

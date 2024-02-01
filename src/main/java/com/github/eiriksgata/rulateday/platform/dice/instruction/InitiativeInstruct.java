@@ -33,10 +33,10 @@ public class InitiativeInstruct {
     public String getAtkList(DiceMessageDTO data) {
         String resultText;
         String groupId;
-        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
-            groupId = "-" + data.getMessageEvent().getUser_id();
-        } else {
+        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.NORMAL.getName())) {
             groupId = "" + data.getMessageEvent().getGroup_id();
+        } else {
+            groupId = "-" + data.getMessageEvent().getUser_id();
         }
         return initiativeService.showInitiativeList(groupId);
     }
@@ -53,10 +53,11 @@ public class InitiativeInstruct {
         String finalTempName = tempName;
 
         String groupId;
-        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
-            groupId = "-" + data.getMessageEvent().getUser_id();
-        } else {
+        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.NORMAL.getName())) {
             groupId = "" + data.getMessageEvent().getGroup_id();
+        } else {
+            groupId = "-" + data.getMessageEvent().getUser_id();
+
         }
 
         String name = data.getMessageEvent().getSender().getNickname();
@@ -73,10 +74,11 @@ public class InitiativeInstruct {
     @InstructReflex(value = {"atkClear", "clearAtk", "atkclear", "AtkClear"}, priority = 2)
     public String clearAtkList(DiceMessageDTO data) {
         String groupId;
-        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
-            groupId = "-" + data.getMessageEvent().getUser_id();
-        } else {
+        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.NORMAL.getName())) {
+
             groupId = "" + data.getMessageEvent().getGroup_id();
+        } else {
+            groupId = "-" + data.getMessageEvent().getUser_id();
         }
         initiativeService.clearGroupDice(groupId);
         return CustomText.getText("initiative.clear");
@@ -90,10 +92,11 @@ public class InitiativeInstruct {
         AtomicBoolean isLimit = new AtomicBoolean(false);
 
         String groupId;
-        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
-            groupId = "-" + data.getMessageEvent().getUser_id();
-        } else {
+        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.NORMAL.getName())) {
             groupId = "" + data.getMessageEvent().getGroup_id();
+        } else {
+            groupId = "-" + data.getMessageEvent().getUser_id();
+
         }
 
         isLimit.set(initiativeService.diceLimit(groupId));

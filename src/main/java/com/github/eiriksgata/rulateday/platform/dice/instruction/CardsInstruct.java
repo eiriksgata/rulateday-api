@@ -87,10 +87,10 @@ public class CardsInstruct {
         }
         String[] addDataArr = cardsTypeList.getContent().split(",");
         Long groupId;
-        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
-            groupId = -data.getMessageEvent().getUser_id();
-        } else {
+        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.NORMAL.getName())) {
             groupId = data.getMessageEvent().getGroup_id();
+        } else {
+            groupId = -data.getMessageEvent().getUser_id();
         }
 
         for (String anAddDataArr : addDataArr) {
@@ -130,22 +130,22 @@ public class CardsInstruct {
     @InstructReflex(value = {"drawHide", "drawhide"}, priority = 3)
     public String drawHideOut(DiceMessageDTO data) {
         Long groupId;
-        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
-            groupId = -data.getSanderId();
+        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.NORMAL.getName())) {
+            groupId = data.getMessageEvent().getGroup_id();
             CardsGroupData result = cardsGroupDataMapper.randomGetCard(groupId);
-            shamrockService.sendPrivateMessage(
+            shamrockService.sendGroupMessage(
                     data.getSanderId(),
+                    data.getMessageEvent().getGroup_id(),
                     CustomText.getText(
                             "cards.draw.hide.group.result",
                             groupId, result.getValue()),
                     data.getWsServerEndpoint()
             );
         } else {
-            groupId = data.getMessageEvent().getGroup_id();
+            groupId = -data.getSanderId();
             CardsGroupData result = cardsGroupDataMapper.randomGetCard(groupId);
-            shamrockService.sendGroupMessage(
+            shamrockService.sendPrivateMessage(
                     data.getSanderId(),
-                    data.getMessageEvent().getGroup_id(),
                     CustomText.getText(
                             "cards.draw.hide.group.result",
                             groupId, result.getValue()),
@@ -163,10 +163,11 @@ public class CardsInstruct {
     @InstructReflex(value = {"draw"}, priority = 2)
     public String drawOut(DiceMessageDTO data) {
         Long groupId;
-        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
-            groupId = -data.getSanderId();
-        } else {
+        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.NORMAL.getName())) {
             groupId = data.getMessageEvent().getGroup_id();
+        } else {
+            groupId = -data.getSanderId();
+
         }
 
         CardsGroupData result = cardsGroupDataMapper.randomGetCard(groupId);
@@ -180,10 +181,11 @@ public class CardsInstruct {
     @InstructReflex(value = {"drawclear", "drawClear"}, priority = 3)
     public String drawClear(DiceMessageDTO data) {
         Long groupId;
-        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.FRIEND.getName())) {
-            groupId = -data.getSanderId();
-        } else {
+        if (data.getMessageEvent().getSub_type().equals(EventEnum.MessageSubType.NORMAL.getName())) {
             groupId = data.getMessageEvent().getGroup_id();
+        } else {
+            groupId = -data.getSanderId();
+
         }
         cardsGroupDataMapper.clearByGroupId(groupId);
         return CustomText.getText("cards.draw.clear");
