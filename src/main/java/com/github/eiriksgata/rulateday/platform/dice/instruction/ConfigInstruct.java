@@ -26,7 +26,7 @@ public class ConfigInstruct {
             return CustomText.getText("dice.master.number.no.set");
         }
         if (data.getSanderId() == Long.parseLong(number)) {
-            diceConfigMapper.updateByPrivateChat(true);
+            diceConfigMapper.updateByPrivateChat(1);
             return CustomText.getText("dice.private.chat.enable");
         } else {
             return CustomText.getText("dice.private.chat.no.permission");
@@ -40,7 +40,7 @@ public class ConfigInstruct {
             return CustomText.getText("dice.master.number.no.set");
         }
         if (data.getSanderId() == Long.parseLong(number)) {
-            diceConfigMapper.updateByPrivateChat(false);
+            diceConfigMapper.updateByPrivateChat(0);
             return CustomText.getText("dice.private.chat.disable");
         } else {
             return CustomText.getText("dice.private.chat.no.permission");
@@ -54,7 +54,7 @@ public class ConfigInstruct {
             return CustomText.getText("dice.master.number.no.set");
         }
         if (data.getSanderId() == Long.parseLong(number)) {
-            diceConfigMapper.updateByBetaVersion(true);
+            diceConfigMapper.updateByBetaVersion(1);
             return CustomText.getText("dice.beta.enable");
         } else {
             return CustomText.getText("dice.beta.no.permission");
@@ -68,7 +68,7 @@ public class ConfigInstruct {
             return CustomText.getText("dice.master.number.no.set");
         }
         if (data.getSanderId() == Long.parseLong(number)) {
-            diceConfigMapper.updateByBetaVersion(false);
+            diceConfigMapper.updateByBetaVersion(0);
             return CustomText.getText("dice.beta.disable");
         } else {
             return CustomText.getText("dice.beta.no.permission");

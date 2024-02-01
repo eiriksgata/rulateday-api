@@ -13,10 +13,10 @@ public interface DiceConfigMapper {
     DiceConfigEntity selectById();
 
     @Update("update dice_config set private_chat=#{privateChat} where id= 1")
-    void updateByPrivateChat(@Param("privateChat") Boolean privateChat);
+    void updateByPrivateChat(@Param("privateChat") Integer privateChat);
 
     @Update("update dice_config set beta_version =#{betaVersion} where id = 1")
-    void updateByBetaVersion(@Param("betaVersion") Boolean betaVersion);
+    void updateByBetaVersion(@Param("betaVersion") Integer betaVersion);
 
 
 }
